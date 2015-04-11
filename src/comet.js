@@ -1,21 +1,25 @@
-require("astro");
-require("time");
+var ATime = require('time');
+var Astro = require('astro');
+var Matrix = require('matrix');
 require("../bower_components/numbers");
 
 /**
- * Comet Class
+ * Comet module
  */
 
-module.exports.Comet = function(comet) {
+module.exports = function(comet) {
 
-  this.name = comet.name;
-  this.t = comet.t;
-  this.e = comet.e;
-  this.q = comet.q;
-  this.peri = comet.peri;
-  this.node = comet.node;
-  this.incl = comet.incl;
+  this.name    = comet.name;
+  this.t       = comet.t;
+  this.e       = comet.e;
+  this.q       = comet.q;
+  this.peri    = comet.peri;
+  this.node    = comet.node;
+  this.incl    = comet.incl;
   this.equinox = comet.equinox;
+
+  var maxApprox = 80;
+  var tolerance = 1.0e-12;
 
   // Equinox -> ATime
   var nEqnxYear  = Math.floor(comet.equinox);
@@ -23,18 +27,16 @@ module.exports.Comet = function(comet) {
   var nEqnxMonth = Math.floor(fEqnxMonth);
   var fEqnxDay   = (fEqnxMonth - nEqnxMonth) * 30.0;
   this.equinoxTime = new ATime(nEqnxYear, nEqnxMonth, fEqnxDay, 0.0);
-  // Vector Constant
-  this.vectorConstant = Matrix.VectorConstant(peri, node, incl, equinoxTime);
 
-  var tolerance = 1.0e-12;
-  var maxApprox = 80;
+  // Vector Constant
+  this.vectorConstant = Matrix.vectorConstant(peri, node, incl, equinoxTime);
 
   /**
    * Get Position on Orbital Plane for Elliptical Orbit
    */
-  var CometStatusEllip = function(julian) {
+  var cometStatusEllip = function(julian) {
     if (this.q === 0.0) {
-      throw new Error("Arithmetic Exception");
+      throw 'Arithmetic Exception';
     }
     var fAxis = this.q / (1.0 - this.e);
     var fM = Astro.GAUSS * (julian - this.t) / (Math.sqrt(fAxis) * fAxis);
@@ -59,7 +61,7 @@ module.exports.Comet = function(comet) {
       } while (Math.abs(fDv) > tolerance && --nCount > 0);
     }
     if (nCount === 0) {
-      throw new ArithmeticException();
+      throw 'Arithmetic Exception';
     }
     var fX = fAxis * (Math.cos(fE1) - this.e);
     var fY = fAxis * Math.sqrt(1.0 - this.e * this.e) * Math.sin(fE1);
@@ -70,9 +72,9 @@ module.exports.Comet = function(comet) {
   /**
    * Get Position on Orbital Plane for Parabolic Orbit
    */
-  var CometStatusPara = function(julian) {
+  var cometStatusPara = function(julian) {
     if (this.q === 0.0) {
-      throw new ArithmeticException();
+      throw 'Arithmetic Exception';
     }
     var fN = Astro.GAUSS * (julian - this.t) /
         (Math.sqrt(2.0) * this.q * Math.sqrt(this.q));
@@ -85,7 +87,7 @@ module.exports.Comet = function(comet) {
       fTanV2 = (fTan2V2 * fTanV2 * 2.0 / 3.0 + fN) / (1.0 + fTan2V2);
     } while (Math.abs(fTanV2 - fOldTanV2) > tolerance && --nCount > 0);
     if (nCount === 0) {
-      throw new ArithmeticException();
+      throw 'Arithmetic Exception';
     }
     fTan2V2 = fTanV2 * fTanV2;
     var fX = this.q * (1.0 - fTan2V2);
@@ -97,9 +99,9 @@ module.exports.Comet = function(comet) {
   /**
    * Get Position on Orbital Plane for Nearly Parabolic Orbit
    */
-  var CometStatusNearPara = function(julian) {
+  var cometStatusNearPara = function(julian) {
     if (this.q === 0.0) {
-      throw new ArithmeticException();
+      throw 'Arithmetic Exception';
     }
     var fA = Math.sqrt((1.0 + 9.0 * this.e) / 10.0);
     var fB = 5.0 * (1 - this.e) / (1.0 + 9.0 * this.e);
@@ -118,13 +120,13 @@ module.exports.Comet = function(comet) {
         fX1 = (fTmp * fX0 * 2.0 / 3.0 + fN) / (1.0 + fTmp);
       } while (Math.abs(fX1 - fX0) > tolerance && --nCount2 > 0);
       if (nCount2 === 0) {
-        throw "Arithmetic Exception";
+        throw 'Arithmetic Exception';
       }
       fA1 = fB * fX1 * fX1;
       fB1 = (-3.809524e-03 * fA1 - 0.017142857) * fA1 * fA1 + 1.0;
     } while (Math.abs(fA1 - fA0) > tolerance && --nCount1 > 0);
     if (nCount1 === 0) {
-      throw "Arithmetic Exception";
+      throw 'Arithmetic Exception';
     }
     var fC1 = ((0.12495238 * fA1 + 0.21714286) * fA1 + 0.4) * fA1 + 1.0;
     var fD1 = ((0.00571429 * fA1 + 0.2       ) * fA1 - 1.0) * fA1 + 1.0;
@@ -138,22 +140,22 @@ module.exports.Comet = function(comet) {
   /**
    * Get Position in Heliocentric Equatorial Coordinates 2000.0
    */
-  var GetPos = function(julian) {
+  this.getPosition = function(julian) {
     var xyz;
     // CometStatus' may be throw ArithmeticException
     if (this.e < 0.98) {
-      xyz = CometStatusEllip(julian);
+      xyz = cometStatusEllip(julian);
     } else if (Math.abs(this.e - 1.0) < tolerance) {
-      xyz = CometStatusPara(julian);
+      xyz = cometStatusPara(julian);
     } else {
-      xyz = CometStatusNearPara(julian);
+      xyz = cometStatusNearPara(julian);
     }
-    xyz = xyz.Rotate(vectorConstant);
-    var mtxPrec = Matrix.PrecMatrix(this.equinoxTime.getJd(), Astro.JD2000);
-    return xyz.Rotate(mtxPrec);
+    xyz = xyz.rotate(vectorConstant);
+    var mtxPrec = Matrix.precMatrix(this.equinoxTime.julian, Astro.JD2000);
+    return xyz.rotate(mtxPrec);
   };
 
-  var getEquinoxJd = function() {
+  this.getEquinoxJd = function() {
     return this.equinoxTime.julian;
   };
 

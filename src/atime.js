@@ -1,10 +1,10 @@
-require("astro");
+var Astro = require('astro');
 
 /**
- * Astronomical Time
+ * Astronomical time module
  */
 
-module.exports.ATime = function(datetime) {
+module.exports = function(datetime) {
 
   this.year = datetime.year;
   this.month = datetime.month;
@@ -167,20 +167,20 @@ module.exports.ATime = function(datetime) {
         nNewDay = 15;
       }
     }
-    newDate = new ATime(nNewYear, nNewMonth, nNewDay, 12, 0, 0, 0.0);
+    newDate   = new ATime(nNewYear, nNewMonth, nNewDay, 12, 0, 0, 0.0);
     nNewYear  = newDate.getYear();
     nNewMonth = newDate.getMonth();
     nNewDay   = newDate.getDay();
 
-    this.year  = nNewYear;
-    this.month = nNewMonth;
-    this.day   = nNewDay;
-    this.hour  = nNewHour;
-    this.minute   = nNewMin;
-    this.second   = fNewSec;
+    this.year   = nNewYear;
+    this.month  = nNewMonth;
+    this.day    = nNewDay;
+    this.hour   = nNewHour;
+    this.minute = nNewMin;
+    this.second = fNewSec;
     this.julian = makeJulian() - timezone / 24.0;
     this.time1  = makeTime1();
-    this.time2 = makeTime2();
+    this.time2  = makeTime2();
   };
 
   /**
@@ -200,18 +200,17 @@ module.exports.ATime = function(datetime) {
     return fEp * Math.PI / 180.0;
   };
 
-
   /**
    * Print to Standard Output
    */
   this.toString = function() {
-    return this.year + "/" +
-           this.month + "/" +
-           this.day + " " +
-           this.hour + ":" +
-           this.minute + ":" +
-           this.second + " = " + julian +
-           " (TZ:" + this.timezone + ")";
+    return this.year     + "/"   +
+           this.month    + "/"   +
+           this.day      + " "   +
+           this.hour     + ":"   +
+           this.minute   + ":"   +
+           this.second   + " = " + julian + " (TZ:" +
+           this.timezone + ")";
   };
 
 };

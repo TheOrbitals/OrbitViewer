@@ -1,14 +1,14 @@
-require("time");
-require("xyz");
+var Xyz    = require('xyz');
+var ATime  = require('atime');
+var UdMath = require('udmath');
 
 /**
- * CometOrbit Class
+ * CometOrbit module
  */
 
-module.exports.CometOrbit = function(comet, division) {
+module.exports = function(comet, division) {
 
   var orbit = []; // actual orbit data
-  var nDivision;  // number of division
   var maxOrbit = 90.0;
   var tolerance = 1.0e-16;
 
@@ -19,32 +19,32 @@ module.exports.CometOrbit = function(comet, division) {
   }
 
   if (comet.e < 1.0 - tolerance) {
-    GetOrbitEllip(comet);
+    getOrbitEllip(comet);
   } else if (comet.e > 1.0 + tolerance) {
-    GetOrbitHyper(comet);
+    getOrbitHyper(comet);
   } else {
-    GetOrbitPara(comet);
+    getOrbitPara(comet);
   }
 
   var vec = comet.vectorConstant;
-  var prec = Matrix.PrecMatrix(comet.getEquinoxJd(), Astro.JD2000);
-  for (var i = 0; i <= nDivision; i++) {
-    orbit[i] = orbit[i].Rotate(vec).Rotate(prec);
+  var prec = Matrix.precMatrix(comet.getEquinoxJd(), Astro.JD2000);
+  for (var i = 0; i <= division; i++) {
+    orbit[i] = orbit[i].rotate(vec).rotate(prec);
   }
 
   /**
    *  Elliptical Orbit
    */
-  var GetOrbitEllip = function(comet) {
+  var getOrbitEllip = function(comet) {
     var fAxis = comet.q / (1.0 - comet.e);
     var fae2 = -2.0 * fAxis * comet.e;
     var ft = Math.sqrt(1.0 - comet.e * comet.e);
     var i, nIdx1, nIdx2, fE, fRCosV, fRSinV;
-    if (fAxis * (1.0 + comet.e) > fMaxOrbit) {
-      var fdE = Math.acos((1.0 - fMaxOrbit / fAxis) / comet.e) /
-          ((this.nDivision / 2) * (this.nDivision / 2));
-      nIdx1 = nIdx2 = this.nDivision / 2;
-      for (i = 0; i <= (this.nDivision / 2); i++) {
+    if (fAxis * (1.0 + comet.e) > maxOrbit) {
+      var fdE = Math.acos((1.0 - maxOrbit / fAxis) / comet.e) /
+          ((this.division / 2) * (this.division / 2));
+      nIdx1 = nIdx2 = this.division / 2;
+      for (i = 0; i <= (this.division / 2); i++) {
         fE = fdE * i * i;
         fRCosV = fAxis * (Math.cos(fE) - comet.e);
         fRSinV = fAxis * ft * Math.sin(fE);
@@ -54,11 +54,11 @@ module.exports.CometOrbit = function(comet, division) {
     } else {
       var nIdx3, nIdx4;
       nIdx1 = 0;
-      nIdx2 = nIdx3 = this.nDivision / 2;
-      nIdx4 = this.nDivision;
+      nIdx2 = nIdx3 = this.division / 2;
+      nIdx4 = this.division;
       fE = 0.0;
-      for (i = 0; i <= (this.nDivision / 4);
-         i++, fE += (2.0 * Math.PI / this.nDivision)) {
+      for (i = 0; i <= (this.division / 4);
+         i++, fE += (2.0 * Math.PI / this.division)) {
         fRCosV = fAxis * (Math.cos(fE) - comet.e);
         fRSinV = fAxis * ft * Math.sin(fE);
         orbit[nIdx1++] = new Xyz(fRCosV,         fRSinV, 0.0);
@@ -72,15 +72,15 @@ module.exports.CometOrbit = function(comet, division) {
   /**
    * Hyperbolic Orbit
    */
-  var GetOrbitHyper = function(comet) {
+  var getOrbitHyper = function(comet) {
     var nIdx1, nIdx2;
     var ft = Math.sqrt(comet.e * comet.e - 1.0);
     var fAxis = comet.e / (comet.e - 1.0);
-    var fdF = UdMath.arccosh((fMaxOrbit + fAxis) /
-              (fAxis * comet.e)) / (this.nDivision / 2);
+    var fdF = UdMath.arccosh((maxOrbit + fAxis) /
+              (fAxis * comet.e)) / (this.division / 2);
     var fF = 0.0;
-    nIdx1 = nIdx2 = this.nDivision / 2;
-    for (var i = 0; i <= (this.nDivision / 2); i++, fF += fdF) {
+    nIdx1 = nIdx2 = this.division / 2;
+    for (var i = 0; i <= (this.division / 2); i++, fF += fdF) {
       var fRCosV = fAxis * (comet.e - UdMath.cosh(fF));
       var fRSinV = fAxis * ft * UdMath.sinh(fF);
       orbit[nIdx1++] = new Xyz(fRCosV,  fRSinV, 0.0);
@@ -91,13 +91,13 @@ module.exports.CometOrbit = function(comet, division) {
   /**
    * Parabolic Orbit
    */
-  var GetOrbitPara = function(comet) {
+  var getOrbitPara = function(comet) {
     var nIdx1, nIdx2;
-    var fdV = (Math.atan(Math.sqrt(fMaxOrbit / comet.e - 1.0)) *
-              2.0) / (nDivision / 2);
+    var fdV = (Math.atan(Math.sqrt(maxOrbit / comet.e - 1.0)) *
+              2.0) / (this.division / 2);
     var fV = 0.0;
-    nIdx1 = nIdx2 = nDivision / 2;
-    for (var i = 0; i <= (nDivision / 2); i++, fV += fdV) {
+    nIdx1 = nIdx2 = this.division / 2;
+    for (var i = 0; i <= (this.division / 2); i++, fV += fdV) {
       var fTanV2 = Math.sin(fV / 2.0) / Math.cos(fV / 2.0);
       var fRCosV = comet.e * (1.0 - fTanV2 * fTanV2);
       var fRSinV = 2.0 * comet.e * fTanV2;
