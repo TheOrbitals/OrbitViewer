@@ -4,7 +4,7 @@ require("astro");
  * Astronomical Time
  */
 
-module.exports = function(datetime) {
+module.exports.ATime = function(datetime) {
 
   this.year = datetime.year;
   this.month = datetime.month;
