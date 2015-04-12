@@ -1,12 +1,13 @@
-var Xyz    = require('xyz');
-var UdMath = require('udmath');
-var Planet = require('planet');
+var Xyz    = require('./xyz');
+var Astro  = require('./astro');
+var UdMath = require('./udmath');
+var Planets = require('./planets');
 
 /**
  * PlanetElm module
  */
 
-module.exports.PlanetElm = function(planetNo, atime) {
+module.exports = function(planetNo, atime) {
 
   var l;   /* M+peri+node */
   var node;  /* Ascending Node */
@@ -15,24 +16,26 @@ module.exports.PlanetElm = function(planetNo, atime) {
   var e;   /* Eccentricity */
   var incl;  /* Inclination */
 
-  switch (planetNo) {
-    case Planet.EARTH:
-      getPlanetElmEarth(atime.julian);
-      break;
-    case Planet.MERCURY:
-    case Planet.VENUS:
-    case Planet.MARS:
-    case Planet.JUPITER:
-    case Planet.SATURN:
-      getPlanetElm1(planetNo, atime.julian);
-      break;
-    case Planet.URANUS:
-    case Planet.NEPTUNE:
-      getPlanetElm2(planetNo, atime.julian);
-      break;
-    default:
-      throw "Arithmetic Exception";
-  }
+  var init = function() {
+    switch (planetNo) {
+      case Planets.Earth:
+        getPlanetElmEarth(atime.julian);
+        break;
+      case Planets.Mercury:
+      case Planets.Venus:
+      case Planets.Mars:
+      case Planets.Jupiter:
+      case Planets.Saturn:
+        getPlanetElm1(planetNo, atime.julian);
+        break;
+      case Planets.Uranus:
+      case Planets.Neptune:
+        getPlanetElm2(planetNo, atime.julian);
+        break;
+      default:
+        throw "Arithmetic Exception";
+    }
+  };
 
   //
   // Mercury
@@ -240,9 +243,9 @@ module.exports.PlanetElm = function(planetNo, atime) {
    * Correction for Perturbation
    */
   var perturbationElement = function(eta, zeta, tbl) {
-    var e1 = (int)(eta/30.0);
+    var e1 = eta/30.0;
     var e2 = e1 + 1;
-    var z1 = (int)(zeta/30.0);
+    var z1 = zeta/30.0;
     var z2 = z1 + 1;
     var v1, v2, v3, v4, p1, p2, p3, p4;
 
@@ -279,7 +282,7 @@ module.exports.PlanetElm = function(planetNo, atime) {
    * Mean orbital element of Jupiter with perturbation
    */
   var perturbationJupiter = function(jd) {
-    var year = (int)((jd - 1721423.5) / 365.244 + 1.0);
+    var year = (jd - 1721423.5) / 365.244 + 1.0;
     var T = year/1000.0;
 
     var L7 = (0.42 - 0.075*T + 0.015*T*T - 0.003*T*T*T) *
@@ -338,19 +341,19 @@ module.exports.PlanetElm = function(planetNo, atime) {
     var C2 = C1 * C1;
     var elmCf;
     switch (planetNo) {
-      case Planet.Mercury:
+      case Planets.Mercury:
         elmCf = MercuryE;
         break;
-      case Planet.Venus:
+      case Planets.Venus:
         elmCf = VenusE;
         break;
-      case Planet.Mars:
+      case Planets.Mars:
         elmCf = MarsE;
         break;
-      case Planet.Jupiter:
+      case Planets.Jupiter:
         elmCf = JupiterE;
         break;
-      case Planet.Saturn:
+      case Planets.Saturn:
         elmCf = SaturnE;
         break;
       default:
@@ -375,10 +378,10 @@ module.exports.PlanetElm = function(planetNo, atime) {
                elmCf.i2 * C2 + elmCf.i3 * C1 * C2);
 
     switch (planetNo) {
-      case Planet.Jupiter:
+      case Planets.Jupiter:
         perturbationJupiter(jd);
         break;
-      case Planet.Saturn:
+      case Planets.Saturn:
         perturbationSaturn(jd);
         break;
     }
@@ -393,10 +396,10 @@ module.exports.PlanetElm = function(planetNo, atime) {
     var d  = T1 * 36525.0;
     var elmCf = null;
     switch (planetNo) {
-      case Planet.Uranus:
+      case Planets.Uranus:
         elmCf = UranusE;
         break;
-      case Planet.Neptune:
+      case Planets.Neptune:
         elmCf = NeptuneE;
         break;
       default:
@@ -458,6 +461,8 @@ module.exports.PlanetElm = function(planetNo, atime) {
 
     return new Xyz(xc, yc, zc);
   };
+
+  init();
 
 };
 

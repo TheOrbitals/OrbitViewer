@@ -1,7 +1,8 @@
-var ATime = require('time');
-var Astro = require('astro');
-var Matrix = require('matrix');
-require("../bower_components/numbers");
+var Xyz    = require('./xyz');
+var ATime  = require('./atime');
+var Astro  = require('./astro');
+var Matrix = require('./matrix');
+// require("../bower_components/numbers");
 
 /**
  * Comet module
@@ -26,10 +27,16 @@ module.exports = function(comet) {
   var fEqnxMonth = (comet.equinox - nEqnxYear) * 12.0;
   var nEqnxMonth = Math.floor(fEqnxMonth);
   var fEqnxDay   = (fEqnxMonth - nEqnxMonth) * 30.0;
-  this.equinoxTime = new ATime(nEqnxYear, nEqnxMonth, fEqnxDay, 0.0);
+  var date = {
+    year: nEqnxYear,
+    month: nEqnxMonth,
+    day: fEqnxDay,
+    timezone: 0.0
+  };
+  this.equinoxTime = new ATime(date);
 
   // Vector Constant
-  this.vectorConstant = Matrix.vectorConstant(peri, node, incl, equinoxTime);
+  this.vectorConstant = Matrix.vectorConstant(this.peri, this.node, this.incl, this.equinoxTime);
 
   /**
    * Get Position on Orbital Plane for Elliptical Orbit
@@ -150,7 +157,7 @@ module.exports = function(comet) {
     } else {
       xyz = cometStatusNearPara(julian);
     }
-    xyz = xyz.rotate(vectorConstant);
+    xyz = xyz.rotate(this.vectorConstant);
     var mtxPrec = Matrix.precMatrix(this.equinoxTime.julian, Astro.JD2000);
     return xyz.rotate(mtxPrec);
   };

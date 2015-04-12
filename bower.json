@@ -6,7 +6,7 @@
     "Don Smith <locksmithdon@gmail.com>"
   ],
   "description": "An orbit viewer for near earth objects (NEOs).",
-  "main": "index.html",
+  "main": "viewer.js",
   "moduleType": [
     "amd",
     "globals"

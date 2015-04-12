@@ -1,4 +1,4 @@
-var Xyz = require("xyz");
+var Xyz = require("./xyz");
 
 /**
  * PlanetOrbit module

@@ -1,6 +1,6 @@
-var Xyz    = require('xyz');
-var UdMath = require('udmath');
-var Planet = require('planet');
+var Xyz    = require('./xyz');
+var UdMath = require('./udmath');
+var Planets = require('./planet');
 
 /**
  * Planet Position by Expansion
@@ -376,13 +376,13 @@ module.exports = function(){
     var i, ParamP;
 
     switch (planetNo) {
-      case Planet.Venus:
+      case Planets.Venus:
         ParamL0 = VenusL0;
         ParamL1 = VenusL1;
         ParamQ  = VenusQ;
         ParamP  = VenusP;
         break;
-      case Planet.Mars:
+      case Planets.Mars:
         ParamL0 = MarsL0;
         ParamL1 = MarsL1;
         ParamQ  = MarsQ;
@@ -427,7 +427,7 @@ module.exports = function(){
     var fq, fN;
 
     switch (planetNo) {
-      case Planet.Jupiter:
+      case Planets.Jupiter:
         ParamN = JupiterN;
         ParamB = JupiterB;
         ParamQ = JupiterQ;
@@ -437,7 +437,7 @@ module.exports = function(){
         fN -= (0.0019 + 0.00002 * fT) * UdMath.udsin(162.78 +  0.38 * fT);
         fq  = (0.000132 + 0.0000011 * fT) * UdMath.udcos(245.93 - 30.349 * fT);
         break;
-      case Planet.Saturn:
+      case Planets.Saturn:
         ParamN = SaturnN;
         ParamB = SaturnB;
         ParamQ = SaturnQ;
@@ -497,7 +497,7 @@ module.exports = function(){
     var fLambda, fBeta, fRadius;
 
     switch (planetNo) {
-      case Planet.Mercury:
+      case Planets.Mercury:
         ParamL = MercuryLambda;
         ParamB = MercuryBeta;
         ParamR = MercuryR;
@@ -521,7 +521,7 @@ module.exports = function(){
         fRadius += (0.007955 + 0.000002 * fT2) *
             UdMath.udcos(298945.03 * fT2 + 169.59);
         break;
-      case Planet.Uranus:
+      case Planets.Uranus:
         ParamL = UranusLambda;
         ParamB = UranusBeta;
         ParamR = UranusR;
@@ -540,7 +540,7 @@ module.exports = function(){
         fRadius += 0.361949 * fT2 * UdMath.udcos(440.702 * fT2 + 19.879);
         fRadius += 0.166685 * fT2 * UdMath.udcos(702.024 * fT2 + 307.419);
         break;
-      case Planet.Neptune:
+      case Planets.Neptune:
         ParamL = NeptuneLambda;
         ParamB = NeptuneBeta;
         ParamR = NeptuneR;
@@ -577,25 +577,27 @@ module.exports = function(){
              fRadius * Math.sin(fBeta));
   };
 
-  this.getPosition = function(planetNo, atime) {
-    switch (planetNo) {
-      case Planet.Earth:
-        return getPosExp0(atime.getTime1());
-      case Planet.Venus:
-      case Planet.Mars:
-        return getPosExp1(planetNo, atime.getTime1());
-      case Planet.Jupiter:
-      case Planet.Saturn:
-        return getPosExp2(planetNo, atime.getTime1());
-      case Planet.Mercury:
-      case Planet.Uranus:
-      case Planet.Neptune:
-        return getPosExp3(planetNo, atime.getTime2());
-    }
-    return null;
-  };
-
 };
+
+function getPosition (planetNo, atime) {
+  switch (planetNo) {
+    case Planets.Earth:
+      return getPosExp0(atime.getTime1());
+    case Planets.Venus:
+    case Planets.Mars:
+      return getPosExp1(planetNo, atime.getTime1());
+    case Planets.Jupiter:
+    case Planets.Saturn:
+      return getPosExp2(planetNo, atime.getTime1());
+    case Planets.Mercury:
+    case Planets.Uranus:
+    case Planets.Neptune:
+      return getPosExp3(planetNo, atime.getTime2());
+  }
+  return null;
+}
+
+module.exports.getPosition = getPosition;
 
 function PlanetExpP0(a, b, c) {
   this.a = a;

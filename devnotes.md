@@ -18,6 +18,6 @@ Developer Notes
 
  - Line 38: Sort out the end of that for loop
 
-
+OrbitViewer.getObject() ... implement it!
 
 

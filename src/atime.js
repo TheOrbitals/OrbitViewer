@@ -1,4 +1,4 @@
-var Astro = require('astro');
+var Astro = require('./astro');
 
 /**
  * Astronomical time module
@@ -6,39 +6,46 @@ var Astro = require('astro');
 
 module.exports = function(datetime) {
 
-  this.year = datetime.year;
-  this.month = datetime.month;
-  this.day = Math.floor(datetime.day);
-
-  this.hour = datetime.hour;
-  if(!datetime.hour) {
-    this.hour = Math.floor((datetime.day - this.day) * 24.0);
-  }
-
-  this.minute = datetime.minute;
-  if(!datetime.minute) {
-    this.minute = Math.floor((datetime.hour - this.hour) * 60.0);
-  }
-
-  this.second = datetime.second;
-  if(!datetime.second) {
-    this.second = Math.floor((datetime.second - this.second) * 60.0);
-  }
-
-  this.julian = makeJulian() - timezone / 24.0;
-  this.timezone = timezone;
-  this.time1 = makeTime1(); // Origin 1974/12/31  0h ET
-  this.time2 = makeTime2(); // Origin 2000/01/01 12h ET
-
-  // flags for changeDate
-  this.intTime = 1;
-  this.decTime = -1;
-
   // abbreviated month names
   var months = [
     "Jan.", "Feb.", "Mar.", "Apr.", "May ", "June",
     "July", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."
   ];
+
+  // flags for changeDate
+  this.intTime = 1;
+  this.decTime = -1;
+
+  this.year = datetime.year;
+  this.month = datetime.month;
+  this.day = Math.floor(datetime.day || 0.0);
+
+  if(datetime.timezone === null || datetime.timezone === undefined) {
+    throw 'Timezone is required';
+  }
+
+  this.hour = datetime.hour;
+  if(!datetime.hour) {
+    this.hour = Math.floor(((datetime.day || 0.0) - this.day) * 24.0);
+  }
+
+  this.minute = datetime.minute;
+  if(!datetime.minute) {
+    this.minute = Math.floor(((datetime.hour || 0.0) - this.hour) * 60.0);
+  }
+
+  this.second = datetime.second;
+  if(!datetime.second) {
+    this.second = Math.floor(((datetime.minute || 0.0) - this.minute) * 60.0);
+  }
+
+  this.timezone = datetime.timezone;
+
+  this.init = function(){
+    this.julian = datetime.julian || this.makeJulian() - datetime.timezone / 24.0;
+    this.time1 = this.makeTime1(); // Origin 1974/12/31  0h ET
+    this.time2 = this.makeTime2(); // Origin 2000/01/01 12h ET
+  };
 
   /**
    * Get Abbreviated Month Name
@@ -50,7 +57,7 @@ module.exports = function(datetime) {
   /**
    * YMD/HMS -> Julian Date
    */
-  var makeJulian = function() {
+  this.makeJulian = function() {
     var year  = this.year;
     var month = this.month;
     var date = this.day +
@@ -74,7 +81,7 @@ module.exports = function(datetime) {
   /**
    * Time Parameter Origin of 1974/12/31  0h ET
    */
-  var makeTime1 = function() {
+  this.makeTime1 = function() {
     // 2442412.5 = 1974.12.31 0h ET
     var ft = (this.julian - 2442412.5) / 365.25;
     var time1 = ft + (0.0317 * ft + 1.43) * 0.000001;
@@ -84,8 +91,8 @@ module.exports = function(datetime) {
   /**
    * Time Parameter Origin of 2000/01/01 12h ET
    */
-  var makeTime2 = function() {
-    var ft = (julian - Astro.JD2000) / 36525.0;
+  this.makeTime2 = function() {
+    var ft = (this.julian - Astro.JD2000) / 36525.0;
     return ft;
   };
 
@@ -184,23 +191,6 @@ module.exports = function(datetime) {
   };
 
   /**
-   * Obliquity of Ecliptic (Static Function)
-   */
-  this.getEp = function(julian) {
-    var ft = (julian - Astro.JD2000) / 36525.0;
-    if (ft > 30.0){   // Out of Calculation Range
-      ft = 30.0;
-    } else if (ft < -30.0){
-      ft = -30.0;
-    }
-    var fEp =  23.43929111 -
-               46.8150  / 60.0 / 60.0 * ft -
-               0.00059  / 60.0 / 60.0 * ft * ft +
-               0.001813 / 60.0 / 60.0 * ft * ft * ft;
-    return fEp * Math.PI / 180.0;
-  };
-
-  /**
    * Print to Standard Output
    */
   this.toString = function() {
@@ -209,8 +199,30 @@ module.exports = function(datetime) {
            this.day      + " "   +
            this.hour     + ":"   +
            this.minute   + ":"   +
-           this.second   + " = " + julian + " (TZ:" +
+           this.second   + " = " + this.julian + " (TZ:" +
            this.timezone + ")";
   };
 
+  this.init();
+
 };
+
+module.exports.getEp = getEp;
+
+/**
+ * Obliquity of Ecliptic (Static Function)
+ */
+function getEp(julian) {
+  var ft = (this.julian - Astro.JD2000) / 36525.0;
+  if (ft > 30.0){   // Out of Calculation Range
+    ft = 30.0;
+  } else if (ft < -30.0){
+    ft = -30.0;
+  }
+  var fEp =  23.43929111 -
+             46.8150  / 60.0 / 60.0 * ft -
+             0.00059  / 60.0 / 60.0 * ft * ft +
+             0.001813 / 60.0 / 60.0 * ft * ft * ft;
+  return fEp * Math.PI / 180.0;
+}
+
