@@ -1,0 +1,33 @@
+{
+  "name": "OrbitViewer",
+  "version": "2.0.0",
+  "description": "A tool to visualize the planets and near earth objects",
+  "main": "main.js",
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^9.0.8",
+    "watchify": "^3.1.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify viewer.js -o main.js",
+    "watch": "watchify viewer.js -o main.js --poll"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OrbitViewerNZ/OrbitViewer.git"
+  },
+  "keywords": [
+    "orbit",
+    "neo",
+    "nasa",
+    "jpl",
+    "visualization"
+  ],
+  "author": "Don Smith",
+  "license": "GPLv2",
+  "bugs": {
+    "url": "https://github.com/OrbitViewerNZ/OrbitViewer/issues"
+  },
+  "homepage": "https://stemn.com/projects/orbit-viewer"
+}
