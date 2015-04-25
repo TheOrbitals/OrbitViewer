@@ -1,19 +1,17 @@
 var Astro = require('./astro');
 var ATime = require('./atime');
 
-Matrix.rotateX = rotateX;
-Matrix.rotateY = rotateY;
-Matrix.rotateZ = rotateZ;
-Matrix.precMatrix = precMatrix;
-Matrix.vectorConstant = vectorConstant;
-
-module.exports = Matrix;
-
 /**
- * Matrix (3x3)
+ * Matrix module (3x3)
  */
 
-function Matrix(
+var fPrecLimit   = 30.0;
+var fGeneralPrec = 360.0/25920;
+
+/**
+ * Constructor
+ */
+var Matrix = function(
   fA11, fA12, fA13,
   fA21, fA22, fA23,
   fA31, fA32, fA33){
@@ -27,69 +25,27 @@ function Matrix(
   this.fA31 = fA31 || 0.0;
   this.fA32 = fA32 || 0.0;
   this.fA33 = fA33 || 0.0;
+};
+
+/**
+ * Instance members
+ */
+var matrix = {
 
   /**
-   * Multiplication of Matrix
+   * Multiply matrix
    */
-  this.multiplyWithMatrix = function(mtx) {
-    var fA11 = this.fA11 * mtx.fA11 + this.fA12 * mtx.fA21 +
-        this.fA13 * mtx.fA31;
-    var fA21 = this.fA21 * mtx.fA11 + this.fA22 * mtx.fA21 +
-        this.fA23 * mtx.fA31;
-    var fA31 = this.fA31 * mtx.fA11 + this.fA32 * mtx.fA21 +
-        this.fA33 * mtx.fA31;
-
-    var fA12 = this.fA11 * mtx.fA12 + this.fA12 * mtx.fA22 +
-        this.fA13 * mtx.fA32;
-    var fA22 = this.fA21 * mtx.fA12 + this.fA22 * mtx.fA22 +
-        this.fA23 * mtx.fA32;
-    var fA32 = this.fA31 * mtx.fA12 + this.fA32 * mtx.fA22 +
-        this.fA33 * mtx.fA32;
-
-    var fA13 = this.fA11 * mtx.fA13 + this.fA12 * mtx.fA23 +
-        this.fA13 * mtx.fA33;
-    var fA23 = this.fA21 * mtx.fA13 + this.fA22 * mtx.fA23 +
-        this.fA23 * mtx.fA33;
-    var fA33 = this.fA31 * mtx.fA13 + this.fA32 * mtx.fA23 +
-        this.fA33 * mtx.fA33;
-
-    return new Matrix(fA11, fA12, fA13,
-                      fA21, fA22, fA23,
-                      fA31, fA32, fA33);
-  };
-
-  /**
-   * Multiplication of Matrix by double
-   */
-  this.multiplyWithDouble = function(x) {
-    var fA11 = this.fA11 * x;
-    var fA21 = this.fA21 * x;
-    var fA31 = this.fA31 * x;
-
-    var fA12 = this.fA12 * x;
-    var fA22 = this.fA22 * x;
-    var fA32 = this.fA32 * x;
-
-    var fA13 = this.fA13 * x;
-    var fA23 = this.fA23 * x;
-    var fA33 = this.fA33 * x;
-
-    return new Matrix(fA11, fA12, fA13,
-                      fA21, fA22, fA23,
-                      fA31, fA32, fA33);
-  };
-
-  this.mul = function(factor){
+  mul: function(factor){
     if(typeof factor === 'number'){
-      return this.multiplyWithDouble(factor);
+      return this._multiplyWithDouble(factor);
     }
-    return this.multiplyWithMatrix(factor);
-  };
+    return this._multiplyWithMatrix(factor);
+  },
 
   /**
-   * Invert Matrix
+   * Invert matrix
    */
-  this.invert = function() {
+  invert: function() {
     var a = 1.0 /
       (this.fA11 * (this.fA22 * this.fA33 - this.fA23 * this.fA32) -
        this.fA12 * (this.fA21 * this.fA33 - this.fA23 * this.fA31) +
@@ -116,12 +72,63 @@ function Matrix(
     this.fA31 = fA31;
     this.fA32 = fA32;
     this.fA33 = fA33;
-  };
+  },
 
-}
+  /**
+   * Multiplication of matrix
+   */
+  _multiplyWithMatrix: function(mtx) {
+    var fA11 = this.fA11 * mtx.fA11 + this.fA12 * mtx.fA21 +
+        this.fA13 * mtx.fA31;
+    var fA21 = this.fA21 * mtx.fA11 + this.fA22 * mtx.fA21 +
+        this.fA23 * mtx.fA31;
+    var fA31 = this.fA31 * mtx.fA11 + this.fA32 * mtx.fA21 +
+        this.fA33 * mtx.fA31;
+
+    var fA12 = this.fA11 * mtx.fA12 + this.fA12 * mtx.fA22 +
+        this.fA13 * mtx.fA32;
+    var fA22 = this.fA21 * mtx.fA12 + this.fA22 * mtx.fA22 +
+        this.fA23 * mtx.fA32;
+    var fA32 = this.fA31 * mtx.fA12 + this.fA32 * mtx.fA22 +
+        this.fA33 * mtx.fA32;
+
+    var fA13 = this.fA11 * mtx.fA13 + this.fA12 * mtx.fA23 +
+        this.fA13 * mtx.fA33;
+    var fA23 = this.fA21 * mtx.fA13 + this.fA22 * mtx.fA23 +
+        this.fA23 * mtx.fA33;
+    var fA33 = this.fA31 * mtx.fA13 + this.fA32 * mtx.fA23 +
+        this.fA33 * mtx.fA33;
+
+    return new Matrix(fA11, fA12, fA13,
+                      fA21, fA22, fA23,
+                      fA31, fA32, fA33);
+  },
+
+  /**
+   * Multiplication of matrix by double
+   */
+  _multiplyWithDouble: function(x) {
+    var fA11 = this.fA11 * x;
+    var fA21 = this.fA21 * x;
+    var fA31 = this.fA31 * x;
+
+    var fA12 = this.fA12 * x;
+    var fA22 = this.fA22 * x;
+    var fA32 = this.fA32 * x;
+
+    var fA13 = this.fA13 * x;
+    var fA23 = this.fA23 * x;
+    var fA33 = this.fA33 * x;
+
+    return new Matrix(fA11, fA12, fA13,
+                      fA21, fA22, fA23,
+                      fA31, fA32, fA33);
+  }
+
+};
 
 /**
- * Get Vector Constant from Angle Elements
+ * Get vector constant from angle elements
  */
 function vectorConstant (fPeri, fNode, fIncl, equinox) {
   // Equinox
@@ -165,10 +172,8 @@ function vectorConstant (fPeri, fNode, fIncl, equinox) {
 }
 
 /**
- * Create Precession Matrix
+ * Create precession matrix
  */
-var fGeneralPrec = 360.0/25920;
-var fPrecLimit = 30.0;
 function precMatrix(fOldEpoch, fNewEpoch) {
   var fJd = 0.0;
   var bSwapEpoch = false;
@@ -244,7 +249,7 @@ function precMatrix(fOldEpoch, fNewEpoch) {
 }
 
 /**
- * Create Rotation Matrix Around X-Axis
+ * Create rotation matrix around x-axis
  */
 function rotateX(angle) {
   var fA11 =  1.0;
@@ -263,7 +268,7 @@ function rotateX(angle) {
 }
 
 /**
- *  Create Rotation Matrix Around Y-Axis
+ *  Create rotation matrix around y-axis
  */
 function rotateY(angle) {
   var fA11 =  Math.cos(angle);
@@ -282,7 +287,7 @@ function rotateY(angle) {
 }
 
 /**
- * Create Rotation Matrix Around Z-Axis
+ * Create rotation matrix around z-axis
  */
 function rotateZ(angle) {
   var fA11 =  Math.cos(angle);
@@ -299,3 +304,18 @@ function rotateZ(angle) {
                     fA21, fA22, fA23,
                     fA31, fA32, fA33);
 }
+
+/**
+ * Static members
+ */
+Matrix.rotateX = rotateX;
+Matrix.rotateY = rotateY;
+Matrix.rotateZ = rotateZ;
+Matrix.precMatrix = precMatrix;
+Matrix.vectorConstant = vectorConstant;
+
+/**
+ * Wire up the module
+ */
+Matrix.prototype = matrix;
+module.exports = Matrix;

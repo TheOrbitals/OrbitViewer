@@ -4,17 +4,8 @@ var Astro = require('./astro');
  * Astronomical time module
  */
 
-module.exports = function(datetime) {
-
-  // abbreviated month names
-  var months = [
-    "Jan.", "Feb.", "Mar.", "Apr.", "May ", "June",
-    "July", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."
-  ];
-
-  // flags for changeDate
-  this.intTime = 1;
-  this.decTime = -1;
+// Constructor
+var ATime = function(datetime) {
 
   this.year = datetime.year;
   this.month = datetime.month;
@@ -41,23 +32,25 @@ module.exports = function(datetime) {
 
   this.timezone = datetime.timezone;
 
-  this.init = function(){
-    this.julian = datetime.julian || this.makeJulian() - datetime.timezone / 24.0;
-    this.time1 = this.makeTime1(); // Origin 1974/12/31  0h ET
-    this.time2 = this.makeTime2(); // Origin 2000/01/01 12h ET
-  };
+  this.julian = datetime.julian || this._makeJulian() - datetime.timezone / 24.0;
+  this.time1 = this._makeTime1(); // Origin 1974/12/31  0h ET
+  this.time2 = this._makeTime2(); // Origin 2000/01/01 12h ET
+};
+
+// Static members
+ATime.intTime = 1;
+ATime.decTime = -1;
+ATime.getEp = getEp;
+ATime.months = months;
+ATime.getMonthAbbr = getMonthAbbr;
+
+// Instance members
+var atime = {
 
   /**
-   * Get Abbreviated Month Name
+   * YMD/HMS -> Julian date
    */
-  this.getMonthAbbr = function(month) {
-    return months[month - 1];
-  };
-
-  /**
-   * YMD/HMS -> Julian Date
-   */
-  this.makeJulian = function() {
+  _makeJulian: function() {
     var year  = this.year;
     var month = this.month;
     var date = this.day +
@@ -76,30 +69,30 @@ module.exports = function(datetime) {
                 Math.floor(year / 100.0) + 2.0;
     }
     return julian;
-  };
+  },
 
   /**
-   * Time Parameter Origin of 1974/12/31  0h ET
+   * Time parameter origin of 1974/12/31  0h ET
    */
-  this.makeTime1 = function() {
+  _makeTime1: function() {
     // 2442412.5 = 1974.12.31 0h ET
     var ft = (this.julian - 2442412.5) / 365.25;
     var time1 = ft + (0.0317 * ft + 1.43) * 0.000001;
     return time1;
-  };
+  },
 
   /**
-   * Time Parameter Origin of 2000/01/01 12h ET
+   * Time parameter origin of 2000/01/01 12h ET
    */
-  this.makeTime2 = function() {
+  _makeTime2: function() {
     var ft = (this.julian - Astro.JD2000) / 36525.0;
     return ft;
-  };
+  },
 
   /**
-   * Julian Date -> YMD/HMS
+   * Julian date -> YMD/HMS
    */
-  var getDate = function(julian) {
+  _getDate: function(julian) {
     julian += 0.5;
     var a = Math.floor(julian);
     if (a >= 2299160.5) {
@@ -120,12 +113,12 @@ module.exports = function(datetime) {
     var min = (hour - this.hour) * 60.0;
     this.minute   = Math.floor(min);
     this.second   = (min - this.minute) * 60.0;
-  };
+  },
 
-  this.changeDate = function(span, incOrDec) {
-    //
-    // First, calculate new Hour, Minute, and Second
-    //
+  _changeDate: function(span, incOrDec) {
+    /**
+     * First, calculate new hour, minute, and second
+     */
     var fHms1 = this.hour * 60.0 * 60.0 + this.minute  * 60.0 + this.second;
     var fHms2 = span.hour * 60.0 * 60.0 + span.minute  * 60.0 + span.second;
     fHms1 += (incOrDec == incTime) ? fHms2 : -fHms2;
@@ -144,9 +137,9 @@ module.exports = function(datetime) {
     var nNewMin  = Math.floor(fHms1 / 60.0) - nNewHour * 60;
     var fNewSec  = fHms1 - (nNewHour * 60.0 * 60.0 + nNewMin * 60.0);
 
-    //
-    // Next, calculate new Year, Month, Day
-    //
+    /**
+     * Next, calculate new year, month, day
+     */
     var newDate = new ATime(this.getYear(), this.getMonth(),
                   this.getDay(), 12, 0, 0.0, 0.0);
     var julian = newDate.getJd();
@@ -185,15 +178,15 @@ module.exports = function(datetime) {
     this.hour   = nNewHour;
     this.minute = nNewMin;
     this.second = fNewSec;
-    this.julian = makeJulian() - timezone / 24.0;
-    this.time1  = makeTime1();
-    this.time2  = makeTime2();
-  };
+    this.julian = _makeJulian() - timezone / 24.0;
+    this.time1  = _makeTime1();
+    this.time2  = _makeTime2();
+  },
 
   /**
-   * Print to Standard Output
+   * Print to standard output
    */
-  this.toString = function() {
+  toString: function() {
     return this.year     + "/"   +
            this.month    + "/"   +
            this.day      + " "   +
@@ -201,20 +194,16 @@ module.exports = function(datetime) {
            this.minute   + ":"   +
            this.second   + " = " + this.julian + " (TZ:" +
            this.timezone + ")";
-  };
-
-  this.init();
+  }
 
 };
 
-module.exports.getEp = getEp;
-
 /**
- * Obliquity of Ecliptic (Static Function)
+ * Obliquity of ecliptic
  */
-function getEp(julian) {
-  var ft = (this.julian - Astro.JD2000) / 36525.0;
-  if (ft > 30.0){   // Out of Calculation Range
+var getEp = function(julian) {
+  var ft = (julian - Astro.JD2000) / 36525.0;
+  if (ft > 30.0){   // Out of calculation range
     ft = 30.0;
   } else if (ft < -30.0){
     ft = -30.0;
@@ -224,5 +213,59 @@ function getEp(julian) {
              0.00059  / 60.0 / 60.0 * ft * ft +
              0.001813 / 60.0 / 60.0 * ft * ft * ft;
   return fEp * Math.PI / 180.0;
-}
+};
 
+/**
+ * Abbreviated month names
+ */
+var months = [
+  "Jan.", "Feb.", "Mar.", "Apr.", "May ", "June",
+  "July", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."
+];
+
+/**
+ * Get abbreviated month name
+ */
+var getMonthAbbr = function(month) {
+  return ATime.months[month - 1];
+};
+
+/**
+ * Get an ATime for today
+ */
+var getToday = function() {
+  var date = new Date();
+  var today = {
+    year: date.getFullYear(),
+    month: date.getMonth()+1,
+    day: date.getDate(),
+    // hour: date.getHours()+1,
+    // minute: date.getMinutes(),
+    // second: date.getSeconds(),
+    hour: 0,
+    minute: 0,
+    second: 0,
+    timezone: 0.0
+  };
+  return new ATime(today);
+};
+
+var ymdStringToATime = function(strYmd) {
+  fYmd = parseFloat(strYmd);
+  nYear = Math.floor(fYmd / 10000.0);
+  fYmd -= nYear * 10000.0;
+  nMonth = Math.floor(fYmd / 100.0);
+  fDay = fYmd - nMonth * 100.0;
+  return new ATime({year: nYear, month: nMonth, day: fDay, timezone: 0.0});
+};
+
+// Static members
+ATime.getEp = getEp;
+ATime.getToday = getToday;
+ATime.ymdStringToATime = ymdStringToATime;
+
+/**
+ * Wire up the module
+ */
+ATime.prototype = atime;
+module.exports = ATime;

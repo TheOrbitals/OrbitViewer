@@ -2,7 +2,8 @@
  * TimeSpan Class for ATime
  */
 
-module.exports = function(year, month, day, hour, minutes, seconds) {
+// Constructor
+var TimeSpan = function(year, month, day, hour, minutes, seconds) {
   this.year    = year;
   this.month   = month;
   this.day     = day;
@@ -10,3 +11,8 @@ module.exports = function(year, month, day, hour, minutes, seconds) {
   this.minutes = minutes;
   this.seconds = seconds;
 };
+
+/**
+ * Wire up the module
+ */
+module.exports = TimeSpan;

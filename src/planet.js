@@ -12,7 +12,7 @@ var julianEnd   = 2473459.5;  // 2060.0
 var planet = {
 
   /**
-   * Get Planet Position in Ecliptic Coordinates (Equinox Date)
+   * Get planet position in ecliptic coordinates (equinox date)
    */
   getPosition: function(planetNo, atime) {
     if (julianStart < atime.julian && atime.julian < julianEnd) {
@@ -25,7 +25,7 @@ var planet = {
 
 };
 
+/**
+ * Wire up the module
+ */
 module.exports = planet;
-
-
-
