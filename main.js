@@ -99,7 +99,7 @@ var canvas = {
 
   // no name labels
   bPlanetName: false,
-  bObjectName: false,
+  bObjectName: true,
   bDistanceLabel: true,
   bDateLabel: true,
 
@@ -204,7 +204,7 @@ var canvas = {
     // Draw Sun
     this.canvasContext.fillStyle = this.colorSun;
     this.canvasContext.beginPath();
-    this.canvasContext.arc(this._x0 - 2, this._y0 - 2, 5, 0, Math.PI*2, true);
+    this.canvasContext.arc(this._x0, this._y0, 5, 0, Math.PI*2, false);
     this.canvasContext.fill();
 
     // Draw Orbit of Object
@@ -226,19 +226,22 @@ var canvas = {
       }
     }
 
-    /*
 
-    // Draw Object Body
-    xyz = this._objectPos.Rotate(this._mtxToEcl).Rotate(this._mtxRotate);
+    // Draw object body
+    xyz = this._objectPos.rotate(this._mtxToEcl).rotate(this._mtxRotate);
     point1 = this._getDrawPoint(xyz);
-    og.setColor(this.colorObject);
-    og.fillArc(point1.x - 2, point1.y - 2, 5, 5, 0, 360);
-    og.setFont(fontObjectName);
-    if (bObjectName) {
-      og.setColor(this.colorObjectName);
-      og.drawString(this.object.getName(), point1.x + 5, point1.y);
+    this.canvasContext.fillStyle = this.colorObject;
+    this.canvasContext.beginPath();
+    this.canvasContext.arc(point1.x, point1.y, 4, 0, Math.PI*2, false);
+    this.canvasContext.fill();
+    // Draw object's label
+    if (this.bObjectName) {
+      this.canvasContext.fillStyle = this.colorInformation;
+      this.canvasContext.font = '12pt Helvetica';
+      this.canvasContext.fillText(this.object.name, point1.x + 10, point1.y);
     }
 
+    /*
     //  Draw Orbit of Planets
     if (Math.abs(epochPlanetOrbit - this.atime.getJd()) > 365.2422 * 5) {
       updatePlanetOrbit(this.atime);
