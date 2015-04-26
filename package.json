@@ -10,8 +10,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify viewer.js -o main.js",
-    "watch": "watchify viewer.js -o main.js --poll"
+    "watch": "watchify viewer.js -o main.js --poll --verbose",
+    "build": "browserify viewer.js -o main.js"
   },
   "repository": {
     "type": "git",
