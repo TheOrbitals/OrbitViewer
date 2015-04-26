@@ -1,6 +1,5 @@
 var Xyz    = require('./xyz');
 var ATime  = require('./atime');
-var Astro  = require('./astro');
 var Matrix = require('./matrix');
 
 /**
@@ -9,6 +8,7 @@ var Matrix = require('./matrix');
 
 var maxApprox = 80;
 var tolerance = 1.0e-12;
+var GAUSS     =  0.01720209895; // Gaussian gravitational constant
 
 /**
  * Constructor
@@ -61,7 +61,7 @@ var comet = {
       xyz = this._cometStatusNearPara(julian);
     }
     xyz = xyz.rotate(this.vectorConstant);
-    var mtxPrec = Matrix.precMatrix(this.equinoxTime.julian, Astro.JD2000);
+    var mtxPrec = Matrix.precMatrix(this.equinoxTime.julian, ATime.JD2000);
     return xyz.rotate(mtxPrec);
   },
 
@@ -77,7 +77,7 @@ var comet = {
       throw 'Arithmetic Exception';
     }
     var fAxis = this.q / (1.0 - this.e);
-    var fM = Astro.GAUSS * (julian - this.t) / (Math.sqrt(fAxis) * fAxis);
+    var fM = GAUSS * (julian - this.t) / (Math.sqrt(fAxis) * fAxis);
     var fE1 = fM + this.e * Math.sin(fM);
     var nCount = maxApprox;
     if (this.e < 0.6) {
@@ -114,7 +114,7 @@ var comet = {
     if (this.q === 0.0) {
       throw 'Arithmetic Exception';
     }
-    var fN = Astro.GAUSS * (julian - this.t) /
+    var fN = GAUSS * (julian - this.t) /
         (Math.sqrt(2.0) * this.q * Math.sqrt(this.q));
     var fTanV2 = fN;
     var fOldTanV2, fTan2V2;
@@ -149,7 +149,7 @@ var comet = {
     do {
       fA0 = fA1;
       fB0 = fB1;
-      fN = fB0 * fA * Astro.GAUSS * (julian - this.t) /
+      fN = fB0 * fA * GAUSS * (julian - this.t) /
            (Math.sqrt(2.0) * this.q * Math.sqrt(this.q));
       var nCount2 = maxApprox;
       do {
@@ -176,6 +176,8 @@ var comet = {
   }
 
 };
+
+Comet.GAUSS = GAUSS;
 
 /**
  * Wire up the module

@@ -1,6 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var Xyz    = require('./src/xyz');
-var Astro  = require('./src/astro');
 var ATime  = require('./src/atime');
 var Comet  = require('./src/comet');
 var Planet = require('./src/planet');
@@ -86,7 +85,7 @@ var canvas = {
    * Rotation Matrix Equatorial(2000)->Ecliptic(DATE)
    */
   _updateRotationMatrix: function(atime) {
-    var mtxPrec = Matrix.precMatrix(Astro.JD2000, atime.julian);
+    var mtxPrec = Matrix.precMatrix(ATime.JD2000, atime.julian);
     var mtxEqt2Ecl = Matrix.rotateX(ATime.getEp(atime.julian));
     this._mtxToEcl = mtxEqt2Ecl.mul(mtxPrec);
     this._epochToEcl = atime.julian;
@@ -409,7 +408,7 @@ var canvas = {
 Canvas.prototype = canvas;
 module.exports = Canvas;
 
-},{"./src/astro":3,"./src/atime":4,"./src/comet":6,"./src/comet-orbit":5,"./src/matrix":7,"./src/planet":11,"./src/planet-orbit":10,"./src/planets":12,"./src/xyz":14}],2:[function(require,module,exports){
+},{"./src/atime":3,"./src/comet":5,"./src/comet-orbit":4,"./src/matrix":6,"./src/planet":10,"./src/planet-orbit":9,"./src/planets":11,"./src/xyz":13}],2:[function(require,module,exports){
 /**
  * Player class
  */
@@ -426,27 +425,12 @@ module.exports = Player;
 
 },{}],3:[function(require,module,exports){
 /**
- * Astronomical Constants
- */
-
-// Instance members
-var astro = {
-  GAUSS:  0.01720209895,
-  JD2000: 2451545.0, // 2000.1.1 12h ET
-  JD1900: 2415021.0  // 1900.1.1 12h ET
-};
-
-/**
- * Wire up the module
- */
-module.exports = astro;
-
-},{}],4:[function(require,module,exports){
-var Astro = require('./astro');
-
-/**
  * Astronomical time module
  */
+
+// Astronomical Constants
+var JD2000 = 2451545.0; // Julian Day on 2000.1.1 12h ET
+var JD1900 = 2415021.0; // Julian Day 1900.1.1 12h ET
 
 // Constructor
 var ATime = function(datetime) {
@@ -529,7 +513,7 @@ var atime = {
    * Time parameter origin of 2000/01/01 12h ET
    */
   _makeTime2: function() {
-    var ft = (this.julian - Astro.JD2000) / 36525.0;
+    var ft = (this.julian - JD2000) / 36525.0;
     return ft;
   },
 
@@ -646,7 +630,7 @@ var atime = {
  * Obliquity of ecliptic
  */
 var getEp = function(julian) {
-  var ft = (julian - Astro.JD2000) / 36525.0;
+  var ft = (julian - JD2000) / 36525.0;
   if (ft > 30.0){   // Out of calculation range
     ft = 30.0;
   } else if (ft < -30.0){
@@ -707,6 +691,8 @@ var ymdStringToATime = function(strYmd) {
 ATime.getEp = getEp;
 ATime.getToday = getToday;
 ATime.ymdStringToATime = ymdStringToATime;
+ATime.JD2000 = JD2000;
+ATime.JD1900 = JD1900;
 
 /**
  * Wire up the module
@@ -714,9 +700,8 @@ ATime.ymdStringToATime = ymdStringToATime;
 ATime.prototype = atime;
 module.exports = ATime;
 
-},{"./astro":3}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var Xyz    = require('./xyz');
-var Astro  = require('./astro');
 var ATime  = require('./atime');
 var UdMath = require('./udmath');
 var Matrix = require('./matrix');
@@ -747,7 +732,7 @@ var CometOrbit = function(comet, division) {
   }
 
   var vec = comet.vectorConstant;
-  var prec = Matrix.precMatrix(comet.getEquinoxJd(), Astro.JD2000);
+  var prec = Matrix.precMatrix(comet.getEquinoxJd(), ATime.JD2000);
   for (var i = 0; i <= division; i++) {
     this.orbit[i] = this.orbit[i].rotate(vec).rotate(prec);
   }
@@ -850,10 +835,9 @@ var cometOrbit = {
 CometOrbit.prototype = cometOrbit;
 module.exports = CometOrbit;
 
-},{"./astro":3,"./atime":4,"./matrix":7,"./udmath":13,"./xyz":14}],6:[function(require,module,exports){
+},{"./atime":3,"./matrix":6,"./udmath":12,"./xyz":13}],5:[function(require,module,exports){
 var Xyz    = require('./xyz');
 var ATime  = require('./atime');
-var Astro  = require('./astro');
 var Matrix = require('./matrix');
 
 /**
@@ -862,6 +846,7 @@ var Matrix = require('./matrix');
 
 var maxApprox = 80;
 var tolerance = 1.0e-12;
+var GAUSS     =  0.01720209895; // Gaussian gravitational constant
 
 /**
  * Constructor
@@ -914,7 +899,7 @@ var comet = {
       xyz = this._cometStatusNearPara(julian);
     }
     xyz = xyz.rotate(this.vectorConstant);
-    var mtxPrec = Matrix.precMatrix(this.equinoxTime.julian, Astro.JD2000);
+    var mtxPrec = Matrix.precMatrix(this.equinoxTime.julian, ATime.JD2000);
     return xyz.rotate(mtxPrec);
   },
 
@@ -930,7 +915,7 @@ var comet = {
       throw 'Arithmetic Exception';
     }
     var fAxis = this.q / (1.0 - this.e);
-    var fM = Astro.GAUSS * (julian - this.t) / (Math.sqrt(fAxis) * fAxis);
+    var fM = GAUSS * (julian - this.t) / (Math.sqrt(fAxis) * fAxis);
     var fE1 = fM + this.e * Math.sin(fM);
     var nCount = maxApprox;
     if (this.e < 0.6) {
@@ -967,7 +952,7 @@ var comet = {
     if (this.q === 0.0) {
       throw 'Arithmetic Exception';
     }
-    var fN = Astro.GAUSS * (julian - this.t) /
+    var fN = GAUSS * (julian - this.t) /
         (Math.sqrt(2.0) * this.q * Math.sqrt(this.q));
     var fTanV2 = fN;
     var fOldTanV2, fTan2V2;
@@ -1002,7 +987,7 @@ var comet = {
     do {
       fA0 = fA1;
       fB0 = fB1;
-      fN = fB0 * fA * Astro.GAUSS * (julian - this.t) /
+      fN = fB0 * fA * GAUSS * (julian - this.t) /
            (Math.sqrt(2.0) * this.q * Math.sqrt(this.q));
       var nCount2 = maxApprox;
       do {
@@ -1030,14 +1015,15 @@ var comet = {
 
 };
 
+Comet.GAUSS = GAUSS;
+
 /**
  * Wire up the module
  */
 Comet.prototype = comet;
 module.exports = Comet;
 
-},{"./astro":3,"./atime":4,"./matrix":7,"./xyz":14}],7:[function(require,module,exports){
-var Astro = require('./astro');
+},{"./atime":3,"./matrix":6,"./xyz":13}],6:[function(require,module,exports){
 var ATime = require('./atime');
 
 /**
@@ -1222,13 +1208,13 @@ function precMatrix(fOldEpoch, fNewEpoch) {
                       0.0, 1.0, 0.0,
                       0.0, 0.0, 1.0);
   }
-  var fT = (fOldEpoch - Astro.JD2000) / 36525.0;
+  var fT = (fOldEpoch - ATime.JD2000) / 36525.0;
   if (fT < -fPrecLimit || fPrecLimit < fT) {
     bSwapEpoch = true;
     var fTmp = fNewEpoch;
     fNewEpoch = fOldEpoch;
     fOldEpoch = fTmp;
-    fT = (fOldEpoch - Astro.JD2000) / 36525.0;
+    fT = (fOldEpoch - ATime.JD2000) / 36525.0;
   }
 
   var fT2 = fT * fT;
@@ -1237,12 +1223,12 @@ function precMatrix(fOldEpoch, fNewEpoch) {
   if (ftt < -fPrecLimit) {
     bOuterNewcomb = true;
     ft = -fPrecLimit;
-    fJd = -fPrecLimit * 36525.0 + Astro.JD2000;
+    fJd = -fPrecLimit * 36525.0 + ATime.JD2000;
   }
   if (fPrecLimit < ftt) {
     bOuterNewcomb = true;
     ft = fPrecLimit;
-    fJd =  fPrecLimit * 36525.0 + Astro.JD2000;
+    fJd =  fPrecLimit * 36525.0 + ATime.JD2000;
   }
 
   var ft2 = ft * ft;
@@ -1359,10 +1345,10 @@ Matrix.vectorConstant = vectorConstant;
 Matrix.prototype = matrix;
 module.exports = Matrix;
 
-},{"./astro":3,"./atime":4}],8:[function(require,module,exports){
-var Xyz    = require('./xyz');
-var Astro  = require('./astro');
-var UdMath = require('./udmath');
+},{"./atime":3}],7:[function(require,module,exports){
+var Xyz     = require('./xyz');
+var ATime   = require('./atime');
+var UdMath  = require('./udmath');
 var Planets = require('./planets');
 
 /**
@@ -1716,7 +1702,7 @@ var planetElm = {
    * Get mean orbital elements (Mercury, Venus, Mars, Jupiter, Saturn)
    */
   _getPlanetElm1: function(planetNo, jd) {
-    var C1 = (jd - Astro.JD1900) / 36525.0;
+    var C1 = (jd - ATime.JD1900) / 36525.0;
     var C2 = C1 * C1;
     var elmCf;
 
@@ -1772,7 +1758,7 @@ var planetElm = {
    * Get mean orbital elements (Uranus, Neptune, Pluto)
    */
   _getPlanetElm2: function(planetNo, jd) {
-    var T1 = ( jd - Astro.JD2000 ) / 36525.0;
+    var T1 = ( jd - ATime.JD2000 ) / 36525.0;
     var T2 = T1 * T1;
     var d  = T1 * 36525.0;
     var elmCf = null;
@@ -1806,7 +1792,7 @@ var planetElm = {
    * Get mean orbital elements (Earth)
    */
   _getPlanetElmEarth: function(jd) {
-    var c = (jd - Astro.JD1900)/36525.0;
+    var c = (jd - ATime.JD1900)/36525.0;
     var c2 = c * c;
     this.l = 180.0 + UdMath.degmal(280.6824 + 36000.769325*c + 7.22222e-4*c2);
     this.peri = 180.0 + UdMath.degmal(281.2206 +
@@ -1854,7 +1840,7 @@ function PlanetElmP2(
  */
 PlanetElm.prototype = planetElm;
 module.exports = PlanetElm;
-},{"./astro":3,"./planets":12,"./udmath":13,"./xyz":14}],9:[function(require,module,exports){
+},{"./atime":3,"./planets":11,"./udmath":12,"./xyz":13}],8:[function(require,module,exports){
 var Xyz    = require('./xyz');
 var UdMath = require('./udmath');
 var Planets = require('./planets');
@@ -2474,7 +2460,7 @@ function PlanetExpP2( /* Jupiter and Saturn */
  */
 module.exports = planetExp;
 
-},{"./planets":12,"./udmath":13,"./xyz":14}],10:[function(require,module,exports){
+},{"./planets":11,"./udmath":12,"./xyz":13}],9:[function(require,module,exports){
 var Xyz = require('./xyz');
 var UdMath = require('./udmath');
 var Matrix = require('./matrix');
@@ -2535,7 +2521,7 @@ var planetOrbit = {
  */
 PlanetOrbit.prototype = planetOrbit;
 module.exports = PlanetOrbit;
-},{"./matrix":7,"./planet-elm":8,"./udmath":13,"./xyz":14}],11:[function(require,module,exports){
+},{"./matrix":6,"./planet-elm":7,"./udmath":12,"./xyz":13}],10:[function(require,module,exports){
 var UdMath    = require('./udmath');
 var PlanetElm = require('./planet-elm');
 var PlanetExp = require('./planet-exp');
@@ -2568,7 +2554,7 @@ var planet = {
  */
 module.exports = planet;
 
-},{"./planet-elm":8,"./planet-exp":9,"./udmath":13}],12:[function(require,module,exports){
+},{"./planet-elm":7,"./planet-exp":8,"./udmath":12}],11:[function(require,module,exports){
 module.exports = {
   Sun     : 0,
   Mercury : 1,
@@ -2582,7 +2568,7 @@ module.exports = {
 };
 
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /**
  * Common Mathematic Functions
  */
@@ -2683,7 +2669,7 @@ module.exports = {
 
 };
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /**
  * 3-Dimensional Vector
  */
@@ -2752,8 +2738,7 @@ var xyz = {
 Xyz.prototype = xyz;
 module.exports = Xyz;
 
-},{}],15:[function(require,module,exports){
-var Astro  = require('./src/astro');
+},{}],14:[function(require,module,exports){
 var ATime  = require('./src/atime');
 var Comet  = require('./src/comet');
 var Canvas = require('./canvas.js');
@@ -2778,7 +2763,7 @@ var params = {
 var t;
 var M = params.M * Math.PI / 180.0;
 var epoch = ATime.ymdStringToATime(params.epoch);
-var n = Astro.GAUSS / (params.a * Math.sqrt(params.a));
+var n = Comet.GAUSS / (params.a * Math.sqrt(params.a));
 
 if (M < Math.PI) {
   t = new ATime({julian: epoch.julian - M / n, timezone: 0.0});
@@ -2804,4 +2789,4 @@ var orbitCanvas = new Canvas(ctx, dimensions, object, todaytime);
 orbitCanvas.update();
 
 
-},{"./canvas.js":1,"./player.js":2,"./src/astro":3,"./src/atime":4,"./src/comet":6}]},{},[15]);
+},{"./canvas.js":1,"./player.js":2,"./src/atime":3,"./src/comet":5}]},{},[14]);

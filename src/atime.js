@@ -1,8 +1,10 @@
-var Astro = require('./astro');
-
 /**
  * Astronomical time module
  */
+
+// Astronomical Constants
+var JD2000 = 2451545.0; // Julian Day on 2000.1.1 12h ET
+var JD1900 = 2415021.0; // Julian Day 1900.1.1 12h ET
 
 // Constructor
 var ATime = function(datetime) {
@@ -85,7 +87,7 @@ var atime = {
    * Time parameter origin of 2000/01/01 12h ET
    */
   _makeTime2: function() {
-    var ft = (this.julian - Astro.JD2000) / 36525.0;
+    var ft = (this.julian - JD2000) / 36525.0;
     return ft;
   },
 
@@ -202,7 +204,7 @@ var atime = {
  * Obliquity of ecliptic
  */
 var getEp = function(julian) {
-  var ft = (julian - Astro.JD2000) / 36525.0;
+  var ft = (julian - JD2000) / 36525.0;
   if (ft > 30.0){   // Out of calculation range
     ft = 30.0;
   } else if (ft < -30.0){
@@ -263,6 +265,8 @@ var ymdStringToATime = function(strYmd) {
 ATime.getEp = getEp;
 ATime.getToday = getToday;
 ATime.ymdStringToATime = ymdStringToATime;
+ATime.JD2000 = JD2000;
+ATime.JD1900 = JD1900;
 
 /**
  * Wire up the module

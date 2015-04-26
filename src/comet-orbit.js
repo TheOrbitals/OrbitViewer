@@ -1,5 +1,4 @@
 var Xyz    = require('./xyz');
-var Astro  = require('./astro');
 var ATime  = require('./atime');
 var UdMath = require('./udmath');
 var Matrix = require('./matrix');
@@ -30,7 +29,7 @@ var CometOrbit = function(comet, division) {
   }
 
   var vec = comet.vectorConstant;
-  var prec = Matrix.precMatrix(comet.getEquinoxJd(), Astro.JD2000);
+  var prec = Matrix.precMatrix(comet.getEquinoxJd(), ATime.JD2000);
   for (var i = 0; i <= division; i++) {
     this.orbit[i] = this.orbit[i].rotate(vec).rotate(prec);
   }

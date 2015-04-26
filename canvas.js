@@ -1,5 +1,4 @@
 var Xyz    = require('./src/xyz');
-var Astro  = require('./src/astro');
 var ATime  = require('./src/atime');
 var Comet  = require('./src/comet');
 var Planet = require('./src/planet');
@@ -85,7 +84,7 @@ var canvas = {
    * Rotation Matrix Equatorial(2000)->Ecliptic(DATE)
    */
   _updateRotationMatrix: function(atime) {
-    var mtxPrec = Matrix.precMatrix(Astro.JD2000, atime.julian);
+    var mtxPrec = Matrix.precMatrix(ATime.JD2000, atime.julian);
     var mtxEqt2Ecl = Matrix.rotateX(ATime.getEp(atime.julian));
     this._mtxToEcl = mtxEqt2Ecl.mul(mtxPrec);
     this._epochToEcl = atime.julian;

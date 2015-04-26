@@ -1,6 +1,6 @@
-var Xyz    = require('./xyz');
-var Astro  = require('./astro');
-var UdMath = require('./udmath');
+var Xyz     = require('./xyz');
+var ATime   = require('./atime');
+var UdMath  = require('./udmath');
 var Planets = require('./planets');
 
 /**
@@ -354,7 +354,7 @@ var planetElm = {
    * Get mean orbital elements (Mercury, Venus, Mars, Jupiter, Saturn)
    */
   _getPlanetElm1: function(planetNo, jd) {
-    var C1 = (jd - Astro.JD1900) / 36525.0;
+    var C1 = (jd - ATime.JD1900) / 36525.0;
     var C2 = C1 * C1;
     var elmCf;
 
@@ -410,7 +410,7 @@ var planetElm = {
    * Get mean orbital elements (Uranus, Neptune, Pluto)
    */
   _getPlanetElm2: function(planetNo, jd) {
-    var T1 = ( jd - Astro.JD2000 ) / 36525.0;
+    var T1 = ( jd - ATime.JD2000 ) / 36525.0;
     var T2 = T1 * T1;
     var d  = T1 * 36525.0;
     var elmCf = null;
@@ -444,7 +444,7 @@ var planetElm = {
    * Get mean orbital elements (Earth)
    */
   _getPlanetElmEarth: function(jd) {
-    var c = (jd - Astro.JD1900)/36525.0;
+    var c = (jd - ATime.JD1900)/36525.0;
     var c2 = c * c;
     this.l = 180.0 + UdMath.degmal(280.6824 + 36000.769325*c + 7.22222e-4*c2);
     this.peri = 180.0 + UdMath.degmal(281.2206 +

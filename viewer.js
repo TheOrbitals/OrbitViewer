@@ -1,4 +1,3 @@
-var Astro  = require('./src/astro');
 var ATime  = require('./src/atime');
 var Comet  = require('./src/comet');
 var Canvas = require('./canvas.js');
@@ -23,7 +22,7 @@ var params = {
 var t;
 var M = params.M * Math.PI / 180.0;
 var epoch = ATime.ymdStringToATime(params.epoch);
-var n = Astro.GAUSS / (params.a * Math.sqrt(params.a));
+var n = Comet.GAUSS / (params.a * Math.sqrt(params.a));
 
 if (M < Math.PI) {
   t = new ATime({julian: epoch.julian - M / n, timezone: 0.0});

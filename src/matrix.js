@@ -1,4 +1,3 @@
-var Astro = require('./astro');
 var ATime = require('./atime');
 
 /**
@@ -183,13 +182,13 @@ function precMatrix(fOldEpoch, fNewEpoch) {
                       0.0, 1.0, 0.0,
                       0.0, 0.0, 1.0);
   }
-  var fT = (fOldEpoch - Astro.JD2000) / 36525.0;
+  var fT = (fOldEpoch - ATime.JD2000) / 36525.0;
   if (fT < -fPrecLimit || fPrecLimit < fT) {
     bSwapEpoch = true;
     var fTmp = fNewEpoch;
     fNewEpoch = fOldEpoch;
     fOldEpoch = fTmp;
-    fT = (fOldEpoch - Astro.JD2000) / 36525.0;
+    fT = (fOldEpoch - ATime.JD2000) / 36525.0;
   }
 
   var fT2 = fT * fT;
@@ -198,12 +197,12 @@ function precMatrix(fOldEpoch, fNewEpoch) {
   if (ftt < -fPrecLimit) {
     bOuterNewcomb = true;
     ft = -fPrecLimit;
-    fJd = -fPrecLimit * 36525.0 + Astro.JD2000;
+    fJd = -fPrecLimit * 36525.0 + ATime.JD2000;
   }
   if (fPrecLimit < ftt) {
     bOuterNewcomb = true;
     ft = fPrecLimit;
-    fJd =  fPrecLimit * 36525.0 + Astro.JD2000;
+    fJd =  fPrecLimit * 36525.0 + ATime.JD2000;
   }
 
   var ft2 = ft * ft;
