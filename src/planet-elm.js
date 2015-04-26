@@ -9,6 +9,7 @@ var Planets = require('./planets');
 
 // Constructor
 var PlanetElm = function(planetNo, atime) {
+
   this.l    = null;  /* M+peri+node */
   this.node = null;  /* Ascending Node */
   this.peri = null;  /* Argument of Perihelion */
@@ -32,7 +33,7 @@ var PlanetElm = function(planetNo, atime) {
       this._getPlanetElm2(planetNo, atime.julian);
       break;
     default:
-      throw "Arithmetic Exception";
+      throw "Exception: No such planet";
   }
 };
 
@@ -385,7 +386,7 @@ var planetElm = {
                elmCf.n2 * C2 + elmCf.n3 * C1 * C2);
     /* Argument of Perihelion */
     this.peri = UdMath.degmal(elmCf.peri + elmCf.p1 * C1 +
-               elmCf.p2 * C2 + elmCf.p3 * C1 * C2 - node);
+               elmCf.p2 * C2 + elmCf.p3 * C1 * C2 - this.node);
     /* Semimajor Axis */
     this.axis = elmCf.axis;
     /* Eccentricity */
@@ -430,7 +431,7 @@ var planetElm = {
     /* Ascending Node */
     this.node =  UdMath.degmal(elmCf.node + elmCf.n1 * T1 + elmCf.n2 *T2);
     /* Argument of Perihelion */
-    this.peri =  UdMath.degmal(elmCf.peri + elmCf.p1 * T1 + elmCf.p2 *T2 - node);
+    this.peri =  UdMath.degmal(elmCf.peri + elmCf.p1 * T1 + elmCf.p2 *T2 - this.node);
     /* Semimajor Axis */
     this.axis = UdMath.degmal(elmCf.axis + elmCf.a1 * T1 + elmCf.a2 *T2);
     /* Eccentricity */

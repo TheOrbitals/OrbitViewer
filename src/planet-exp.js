@@ -424,9 +424,8 @@ var getPosExp1 = function(planetNo, fT) {
  * Get Position of Jupiter and Saturn
  */
 var getPosExp2 = function(planetNo, fT) {
-  var ParamN, ParamB, ParamQ;
-  var i, ParamP;
-  var fq, fN;
+  var ParamN, ParamB, ParamQ, ParamP;
+  var i, fq, fN;
 
   switch (planetNo) {
     case Planets.Jupiter:
@@ -472,7 +471,7 @@ var getPosExp2 = function(planetNo, fT) {
 
   // Beta
   var fBeta = Math.asin(ParamP.B1 * UdMath.udsin(ff + ParamP.B2)) +
-              UdMath.deg2rad((ParamP.B3 + ParamP.B4 * fT) +
+              UdMath.deg2rad((ParamP.B3 + ParamP.B4 * fT) *
               UdMath.udsin(ff + ParamP.B5));
   for (i = 0; i < ParamB.length; i++) {
     fBeta += ParamB[i].a * UdMath.udsin(ParamB[i].b + ParamB[i].c * fT);
@@ -492,7 +491,7 @@ var getPosExp2 = function(planetNo, fT) {
 };
 
 /**
- * Get Position of Mercury, Uranus, Nneptune, Pluto
+ * Get Position of Mercury, Uranus, Neptune
  */
 var getPosExp3 = function(planetNo, fT2) {
   var ParamL, ParamB, ParamR;

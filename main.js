@@ -20,61 +20,67 @@ function Canvas(context, dimensions, object, atime) {
   this.object = object;
   this.atime = atime;
 
-  this._planetCount = 8;
+  this._planetOrbit = [];
+  this._centerObjectSelected = 0;
 
-  this._zoom    = 61.0;
+  this.bPlanetName    = true;
+  this.bObjectName    = true;
+  this.bDistanceLabel = true;
+  this.bDateLabel     = true;
+
+  this._zoom    = 9.0;
   this._rotateH = 15.0;
   this._rotateV = 50.0;
 
   this._planetPos = [];
-  for(var p = 0; p < this._planetCount; p++){
+  for(var p = 0; p < planetCount; p++){
     this._planetPos.push(new Xyz());
   }
 
-  this._planetOrbit = [];
-  // for(var po = 0; po < this._planetCount; po++){
-  //   this._planetOrbit.push(new PlanetOrbit());
-  // }
-
   this._orbitDisplay = [];
-  for(var o = 0; o < this._planetCount+2; o++){
+  for(var o = 0; o < planetCount+2; o++){
     this._orbitDisplay.push(true);
   }
   this._orbitDisplay[0] = false;
+  // this._orbitDisplay[7] = false;
+  // this._orbitDisplay[8] = false;
+  // this._orbitDisplay[9] = false;
 
   this._objectOrbit = new CometOrbit(object, 120);
 
-  this.epochPlanetOrbit = null;
-  // updatePlanetOrbit(atime);
+  this._epochPlanetOrbit = null;
+  this._updatePlanetOrbit(atime);
 
   this._updateRotationMatrix(atime);
   this.setDate(atime);
 }
 
 
+// Colors
+var colorBackground       = '#000000';
+var colorObjectOrbitUpper = '#00F5FF';
+var colorObjectOrbitLower = '#0000FF';
+var colorObject           = '#00FFFF';
+var colorObjectName       = '#00CCCC';
+var colorPlanetOrbitUpper = '#FFFFFF';
+var colorPlanetOrbitLower = '#808080';
+var colorPlanet           = '#00FF00';
+var colorPlanetName       = '#00AA00';
+var colorSun              = '#D04040';
+var colorAxisPlus         = '#FFFF00';
+var colorAxisMinus        = '#555500';
+var colorInformation      = '#FFFFFF';
+
+// Other private statics for the module
+var font = '12pt Helvetica';
+var planetCount = 8;
+var offscreen = null;
+
+
 /**
  * Instance members
  */
 var canvas = {
-
-  _centerObjectSelected: 0,
-
-  /**
-   * Colors
-   */
-  colorBackground       : '#000000',
-  colorObjectOrbitUpper : '#00F5FF',
-  colorObjectOrbitLower : '#0000FF',
-  colorObject           : '#00FFFF',
-  colorObjectName       : '#00CCCC',
-  colorPlanetOrbitUpper : '#FFFFFF',
-  colorPlanetOrbitLower : '#808080',
-  colorPlanet           : '#00FF00',
-  colorPlanetName       : '#00AA00',
-  colorSun              : '#D04040',
-  colorAxisPlus         : '#FFFF00',
-  colorAxisMinus        : '#555500',
-  colorInformation      : '#FFFFFF',
 
   /**
    * Rotation Matrix Equatorial(2000)->Ecliptic(DATE)
@@ -86,6 +92,14 @@ var canvas = {
     this._epochToEcl = atime.julian;
   },
 
+  _updatePlanetOrbit: function(atime) {
+    for (var i = Planets.Mercury; i <= Planets.Neptune; i++) {
+      var newOrbit = new PlanetOrbit(i, atime, 48);
+      this._planetOrbit[i-1] = newOrbit;
+    }
+    this._epochPlanetOrbit = atime.julian;
+  },
+
   _drawLine: function(x1, y1, x2, y2){
       this.canvasContext.beginPath();
       this.canvasContext.moveTo(x1, y1);
@@ -94,18 +108,9 @@ var canvas = {
       this.canvasContext.stroke();
   },
 
-  // no offscreen image
-  offscreen:  null,
-
-  // no name labels
-  bPlanetName: false,
-  bObjectName: true,
-  bDistanceLabel: true,
-  bDateLabel: true,
-
   _drawEclipticAxis: function(){
       var xyz, point;
-      this.canvasContext.strokeStyle = this.colorAxisMinus;
+      this.canvasContext.strokeStyle = colorAxisMinus;
 
       // -X
       xyz = (new Xyz(-50.0, 0.0, 0.0)).rotate(this._mtxRotate);
@@ -117,7 +122,7 @@ var canvas = {
       point = this._getDrawPoint(xyz);
       this._drawLine(this._x0, this._y0, point.x, point.y);
 
-      this.canvasContext.strokeStyle = this.colorAxisPlus;
+      this.canvasContext.strokeStyle = colorAxisPlus;
 
       // +X
       xyz = (new Xyz( 50.0, 0.0, 0.0)).rotate(this._mtxRotate);
@@ -138,12 +143,57 @@ var canvas = {
     return {x: x, y: y};
   },
 
+  _drawPlanetOrbit: function(planetOrbit, colorUpper, colorLower) {
+    var point1, point2;
+    var xyz = planetOrbit.getAt(0).rotate(this._mtxToEcl).rotate(this._mtxRotate);
+    point1 = this._getDrawPoint(xyz);
+    for (var i = 1; i <= planetOrbit.division; i++) {
+      xyz = planetOrbit.getAt(i).rotate(this._mtxToEcl);
+      if (xyz.z >= 0.0) {
+        this.canvasContext.strokeStyle = colorUpper;
+      } else {
+        this.canvasContext.strokeStyle = colorLower;
+      }
+      xyz = xyz.rotate(this._mtxRotate);
+      point2 = this._getDrawPoint(xyz);
+      this._drawLine(point1.x, point1.y, point2.x, point2.y);
+      point1 = point2;
+    }
+  },
+
+  _drawEarthOrbit: function(planetOrbit, colorUpper, colorLower) {
+      var point1, point2;
+      var xyz = planetOrbit.getAt(0).rotate(this._mtxToEcl).rotate(this._mtxRotate);
+      point1 = this._getDrawPoint(xyz);
+      for (var i = 1; i <= planetOrbit.division; i++) {
+          xyz = planetOrbit.getAt(i).rotate(this._mtxToEcl);
+          this.canvasContext.strokeStyle = colorUpper;
+          xyz = xyz.rotate(this._mtxRotate);
+          point2 = this._getDrawPoint(xyz);
+          this._drawLine(point1.x, point1.y, point2.x, point2.y);
+          point1 = point2;
+      }
+  },
+
+  _drawPlanetBody: function(planetPos, strName) {
+    var xyz = planetPos.rotate(this._mtxRotate);
+    var point = this._getDrawPoint(xyz);
+    this.canvasContext.fillStyle = colorPlanet;
+    this.canvasContext.beginPath();
+    this.canvasContext.arc(point.x, point.y, 4, 0, Math.PI*2, false);
+    this.canvasContext.fill();
+    if (this.bPlanetName) {
+      this.canvasContext.fillStyle = colorPlanetName;
+      this.canvasContext.fillText(strName, point.x + 10, point.y);
+    }
+  },
+
   /**
    * Date Parameter Set
    */
   setDate: function(atime) {
     this._objectPos = this.object.getPosition(atime.julian);
-    for (var i = 0; i < this._planetCount; i++) {
+    for (var i = 0; i < planetCount; i++) {
       this._planetPos[i] = Planet.getPosition(Planets.Mercury+i, atime);
     }
   },
@@ -195,14 +245,14 @@ var canvas = {
     // Graphics og = offscreen.getGraphics();
 
     // Draw Frame
-    this.canvasContext.strokeStyle = this.colorBackground;
+    this.canvasContext.strokeStyle = colorBackground;
     this.canvasContext.fillRect(0, 0, this.dimensions.width - 1, this.dimensions.height - 1);
 
     // Draw Ecliptic Axis
     this._drawEclipticAxis();
 
     // Draw Sun
-    this.canvasContext.fillStyle = this.colorSun;
+    this.canvasContext.fillStyle = colorSun;
     this.canvasContext.beginPath();
     this.canvasContext.arc(this._x0, this._y0, 5, 0, Math.PI*2, false);
     this.canvasContext.fill();
@@ -215,9 +265,9 @@ var canvas = {
       for (var i = 1; i <= this._objectOrbit.division; i++) {
         xyz = this._objectOrbit.getAt(i).rotate(this._mtxToEcl);
         if (xyz.z >= 0.0) {
-          this.canvasContext.strokeStyle = this.colorObjectOrbitUpper;
+          this.canvasContext.strokeStyle = colorObjectOrbitUpper;
         } else {
-          this.canvasContext.strokeStyle = this.colorObjectOrbitLower;
+          this.canvasContext.strokeStyle = colorObjectOrbitLower;
         }
         xyz = xyz.rotate(this._mtxRotate);
         point2 = this._getDrawPoint(xyz);
@@ -226,94 +276,87 @@ var canvas = {
       }
     }
 
-
     // Draw object body
     xyz = this._objectPos.rotate(this._mtxToEcl).rotate(this._mtxRotate);
     point1 = this._getDrawPoint(xyz);
-    this.canvasContext.fillStyle = this.colorObject;
+    this.canvasContext.fillStyle = colorObject;
     this.canvasContext.beginPath();
     this.canvasContext.arc(point1.x, point1.y, 4, 0, Math.PI*2, false);
     this.canvasContext.fill();
     // Draw object's label
-    if (this.bObjectName) {
-      this.canvasContext.fillStyle = this.colorInformation;
-      this.canvasContext.font = '12pt Helvetica';
+    if(this.bObjectName) {
+      this.canvasContext.font = font;
+      this.canvasContext.fillStyle = colorInformation;
       this.canvasContext.fillText(this.object.name, point1.x + 10, point1.y);
     }
 
-    /*
     //  Draw Orbit of Planets
-    if (Math.abs(epochPlanetOrbit - this.atime.getJd()) > 365.2422 * 5) {
-      updatePlanetOrbit(this.atime);
+    if(Math.abs(this._epochPlanetOrbit - this.atime.julian) > 365.2422 * 5) {
+      this._updatePlanetOrbit(this.atime);
     }
-    og.setFont(fontPlanetName);
+    this.canvasContext.font = font;
 
-    if (this._orbitDisplay[0] || this._orbitDisplay[10]) {
-      drawPlanetOrbit(og, this._planetOrbit[Planets.PLUTO-Planets.MERCURY],
-              this.colorPlanetOrbitUpper, this.colorPlanetOrbitLower);
+    if(this._orbitDisplay[0] || this._orbitDisplay[9]) {
+
+      this._drawPlanetOrbit(this._planetOrbit[Planets.Neptune-1],
+              colorPlanetOrbitUpper, colorPlanetOrbitLower);
     }
-    drawPlanetBody(og, this._planetPos[8], "Pluto");
+    this._drawPlanetBody(this._planetPos[7], "Neptune");
 
-    if (this._orbitDisplay[0] || this._orbitDisplay[9]) {
-
-      drawPlanetOrbit(og, this._planetOrbit[Planets.NEPTUNE-Planets.MERCURY],
-              this.colorPlanetOrbitUpper, this.colorPlanetOrbitLower);
+    if(this._orbitDisplay[0] || this._orbitDisplay[8]) {
+      this._drawPlanetOrbit(this._planetOrbit[Planets.Uranus-1],
+              colorPlanetOrbitUpper, colorPlanetOrbitLower);
     }
-    drawPlanetBody(og, this._planetPos[7], "Neptune");
+    this._drawPlanetBody(this._planetPos[6], "Uranus");
 
-    if (this._orbitDisplay[0] || this._orbitDisplay[8]) {
-      drawPlanetOrbit(og, this._planetOrbit[Planets.URANUS-Planets.MERCURY],
-              this.colorPlanetOrbitUpper, this.colorPlanetOrbitLower);
+    if(this._orbitDisplay[0] || this._orbitDisplay[7]) {
+      this._drawPlanetOrbit(this._planetOrbit[Planets.Saturn-1],
+              colorPlanetOrbitUpper, colorPlanetOrbitLower);
     }
-    drawPlanetBody(og, this._planetPos[6], "Uranus");
+    this._drawPlanetBody(this._planetPos[5], "Saturn");
 
-    if (this._orbitDisplay[0] || this._orbitDisplay[7]) {
-      drawPlanetOrbit(og, this._planetOrbit[Planets.SATURN-Planets.MERCURY],
-              this.colorPlanetOrbitUpper, this.colorPlanetOrbitLower);
+    if(this._orbitDisplay[0] || this._orbitDisplay[6]) {
+      this._drawPlanetOrbit(this._planetOrbit[Planets.Jupiter-1],
+              colorPlanetOrbitUpper, colorPlanetOrbitLower);
     }
-    drawPlanetBody(og, this._planetPos[5], "Saturn");
+    this._drawPlanetBody(this._planetPos[4], "Jupiter");
 
-    if (this._orbitDisplay[0] || this._orbitDisplay[6]) {
-      drawPlanetOrbit(og, this._planetOrbit[Planets.JUPITER-Planets.MERCURY],
-              this.colorPlanetOrbitUpper, this.colorPlanetOrbitLower);
-    }
-    drawPlanetBody(og, this._planetPos[4], "Jupiter");
-
-    if (fZoom * 1.524 >= 7.5) {
+    if(this._zoom * 1.524 >= 7.5) {
       if (this._orbitDisplay[0] || this._orbitDisplay[5]) {
 
-        drawPlanetOrbit(og, this._planetOrbit[Planets.MARS-Planets.MERCURY],
-                this.colorPlanetOrbitUpper, this.colorPlanetOrbitLower);
+        this._drawPlanetOrbit(this._planetOrbit[Planets.Mars-1],
+                colorPlanetOrbitUpper, colorPlanetOrbitLower);
       }
-      drawPlanetBody(og, this._planetPos[3], "Mars");
+      this._drawPlanetBody(this._planetPos[3], "Mars");
     }
-    if (fZoom * 1.000 >= 7.5) {
-                        if (this._orbitDisplay[0] || this._orbitDisplay[4]) {
+    if(this._zoom * 1.000 >= 7.5) {
+      if (this._orbitDisplay[0] || this._orbitDisplay[4]) {
 
-         drawEarthOrbit(og, this._planetOrbit[Planets.EARTH-Planets.MERCURY],
-            this.colorPlanetOrbitUpper, this.colorPlanetOrbitUpper);
-                        }
-      drawPlanetBody(og, this._planetPos[2], "Earth");
+        this._drawEarthOrbit(this._planetOrbit[Planets.Earth-1],
+            colorPlanetOrbitUpper, colorPlanetOrbitUpper);
+      }
+      this._drawPlanetBody(this._planetPos[2], "Earth");
 
     }
-    if (fZoom * 0.723 >= 7.5) {
-                        if (this._orbitDisplay[0] || this._orbitDisplay[3]) {
-         drawPlanetOrbit(og, this._planetOrbit[Planets.VENUS-Planets.MERCURY],
-            this.colorPlanetOrbitUpper, this.colorPlanetOrbitLower);
-                        }
-      drawPlanetBody(og, this._planetPos[1], "Venus");
+    if(this._zoom * 0.723 >= 7.5) {
+      if (this._orbitDisplay[0] || this._orbitDisplay[3]) {
+         this._drawPlanetOrbit(this._planetOrbit[Planets.Venus-1],
+            colorPlanetOrbitUpper, colorPlanetOrbitLower);
+      }
+      this._drawPlanetBody(this._planetPos[1], "Venus");
     }
-    if (fZoom * 0.387 >= 7.5) {
-                        if (this._orbitDisplay[0] || this._orbitDisplay[2]) {
-         drawPlanetOrbit(og, this._planetOrbit[Planets.MERCURY-Planets.MERCURY],
-            this.colorPlanetOrbitUpper, this.colorPlanetOrbitLower);
-                        }
-      drawPlanetBody(og, this._planetPos[0], "Mercury");
+    if(this._zoom * 0.387 >= 7.5) {
+      if (this._orbitDisplay[0] || this._orbitDisplay[2]) {
+         this._drawPlanetOrbit(this._planetOrbit[Planets.Mercury-1],
+            colorPlanetOrbitUpper, colorPlanetOrbitLower);
+      }
+      this._drawPlanetBody(this._planetPos[0], "Mercury");
     }
 
+    /*
     // Information
     og.setFont(fontInformation);
-    og.setColor(this.colorInformation);
+    og.setColor(colorInformation);
     FontMetrics fm = og.getFontMetrics();
 
     // Object Name String
@@ -1328,6 +1371,7 @@ var Planets = require('./planets');
 
 // Constructor
 var PlanetElm = function(planetNo, atime) {
+
   this.l    = null;  /* M+peri+node */
   this.node = null;  /* Ascending Node */
   this.peri = null;  /* Argument of Perihelion */
@@ -1351,7 +1395,7 @@ var PlanetElm = function(planetNo, atime) {
       this._getPlanetElm2(planetNo, atime.julian);
       break;
     default:
-      throw "Arithmetic Exception";
+      throw "Exception: No such planet";
   }
 };
 
@@ -1704,7 +1748,7 @@ var planetElm = {
                elmCf.n2 * C2 + elmCf.n3 * C1 * C2);
     /* Argument of Perihelion */
     this.peri = UdMath.degmal(elmCf.peri + elmCf.p1 * C1 +
-               elmCf.p2 * C2 + elmCf.p3 * C1 * C2 - node);
+               elmCf.p2 * C2 + elmCf.p3 * C1 * C2 - this.node);
     /* Semimajor Axis */
     this.axis = elmCf.axis;
     /* Eccentricity */
@@ -1749,7 +1793,7 @@ var planetElm = {
     /* Ascending Node */
     this.node =  UdMath.degmal(elmCf.node + elmCf.n1 * T1 + elmCf.n2 *T2);
     /* Argument of Perihelion */
-    this.peri =  UdMath.degmal(elmCf.peri + elmCf.p1 * T1 + elmCf.p2 *T2 - node);
+    this.peri =  UdMath.degmal(elmCf.peri + elmCf.p1 * T1 + elmCf.p2 *T2 - this.node);
     /* Semimajor Axis */
     this.axis = UdMath.degmal(elmCf.axis + elmCf.a1 * T1 + elmCf.a2 *T2);
     /* Eccentricity */
@@ -2237,9 +2281,8 @@ var getPosExp1 = function(planetNo, fT) {
  * Get Position of Jupiter and Saturn
  */
 var getPosExp2 = function(planetNo, fT) {
-  var ParamN, ParamB, ParamQ;
-  var i, ParamP;
-  var fq, fN;
+  var ParamN, ParamB, ParamQ, ParamP;
+  var i, fq, fN;
 
   switch (planetNo) {
     case Planets.Jupiter:
@@ -2285,7 +2328,7 @@ var getPosExp2 = function(planetNo, fT) {
 
   // Beta
   var fBeta = Math.asin(ParamP.B1 * UdMath.udsin(ff + ParamP.B2)) +
-              UdMath.deg2rad((ParamP.B3 + ParamP.B4 * fT) +
+              UdMath.deg2rad((ParamP.B3 + ParamP.B4 * fT) *
               UdMath.udsin(ff + ParamP.B5));
   for (i = 0; i < ParamB.length; i++) {
     fBeta += ParamB[i].a * UdMath.udsin(ParamB[i].b + ParamB[i].c * fT);
@@ -2305,7 +2348,7 @@ var getPosExp2 = function(planetNo, fT) {
 };
 
 /**
- * Get Position of Mercury, Uranus, Nneptune, Pluto
+ * Get Position of Mercury, Uranus, Neptune
  */
 var getPosExp3 = function(planetNo, fT2) {
   var ParamL, ParamB, ParamR;
@@ -2432,8 +2475,10 @@ function PlanetExpP2( /* Jupiter and Saturn */
 module.exports = planetExp;
 
 },{"./planets":12,"./udmath":13,"./xyz":14}],10:[function(require,module,exports){
-var Xyz = require("./xyz");
-var PlanetElm = require("./planet-elm");
+var Xyz = require('./xyz');
+var UdMath = require('./udmath');
+var Matrix = require('./matrix');
+var PlanetElm = require('./planet-elm');
 
 /**
  * PlanetOrbit module
@@ -2444,12 +2489,9 @@ var PlanetOrbit = function(planetNo, atime, division){
 
   var planetElm = new PlanetElm(planetNo, atime);
 
-  this._doGetPlanetOrbit(planetElm);
+  this.orbit = [];
   this.division = division;
-
-  for(d = 0; d < division; d++) {
-    this.orbit.push(new Xyz());
-  }
+  this._doGetPlanetOrbit(planetElm);
 
   var vec = Matrix.vectorConstant(planetElm.peri * Math.PI/180.0,
                      planetElm.node * Math.PI/180.0,
@@ -2463,8 +2505,6 @@ var PlanetOrbit = function(planetNo, atime, division){
 
 // Instance members
 var planetOrbit = {
-
-  orbit: [],
 
   getAt: function(index){
     return this.orbit[index];
@@ -2495,7 +2535,7 @@ var planetOrbit = {
  */
 PlanetOrbit.prototype = planetOrbit;
 module.exports = PlanetOrbit;
-},{"./planet-elm":8,"./xyz":14}],11:[function(require,module,exports){
+},{"./matrix":7,"./planet-elm":8,"./udmath":13,"./xyz":14}],11:[function(require,module,exports){
 var UdMath    = require('./udmath');
 var PlanetElm = require('./planet-elm');
 var PlanetExp = require('./planet-exp');

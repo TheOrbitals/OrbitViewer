@@ -1,5 +1,7 @@
-var Xyz = require("./xyz");
-var PlanetElm = require("./planet-elm");
+var Xyz = require('./xyz');
+var UdMath = require('./udmath');
+var Matrix = require('./matrix');
+var PlanetElm = require('./planet-elm');
 
 /**
  * PlanetOrbit module
@@ -10,12 +12,9 @@ var PlanetOrbit = function(planetNo, atime, division){
 
   var planetElm = new PlanetElm(planetNo, atime);
 
-  this._doGetPlanetOrbit(planetElm);
+  this.orbit = [];
   this.division = division;
-
-  for(d = 0; d < division; d++) {
-    this.orbit.push(new Xyz());
-  }
+  this._doGetPlanetOrbit(planetElm);
 
   var vec = Matrix.vectorConstant(planetElm.peri * Math.PI/180.0,
                      planetElm.node * Math.PI/180.0,
@@ -29,8 +28,6 @@ var PlanetOrbit = function(planetNo, atime, division){
 
 // Instance members
 var planetOrbit = {
-
-  orbit: [],
 
   getAt: function(index){
     return this.orbit[index];
