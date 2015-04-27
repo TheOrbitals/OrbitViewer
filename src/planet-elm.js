@@ -260,11 +260,11 @@ var planetElm = {
    * Correction for Perturbation
    */
   _perturbationElement: function(eta, zeta, tbl) {
-    var e1 = eta/30.0;
+    var e1 = Math.floor(eta/30.0);
     var e2 = e1 + 1;
-    var z1 = zeta/30.0;
+    var z1 = Math.floor(zeta/30.0);
     var z2 = z1 + 1;
-    var v1, v2, v3, v4, p1, p2, p3, p4;
+    var v1, v2, v3, v4, p1, p2, p3;
 
     if(e1 >= 12 && z1 >= 12){
       return tbl[z1*13 + e1];
@@ -299,7 +299,7 @@ var planetElm = {
    * Mean orbital element of Jupiter with perturbation
    */
   _perturbationJupiter: function(jd) {
-    var year = (jd - 1721423.5) / 365.244 + 1.0;
+    var year = Math.floor((jd - 1721423.5) / 365.244 + 1.0);
     var T = year/1000.0;
 
     var L7 = (0.42 - 0.075*T + 0.015*T*T - 0.003*T*T*T) *
@@ -325,7 +325,7 @@ var planetElm = {
    * Mean orbital element of Saturn with perturbation
    */
   _perturbationSaturn: function(jd) {
-    var year = (jd - 1721423.5) / 365.244 + 1.0;
+    var year = Math.floor((jd - 1721423.5) / 365.244 + 1.0);
     var T = year/1000.0;
 
     var AT = 0.88 - 0.0633*T + 0.03*T*T - 0.0006*T*T*T;

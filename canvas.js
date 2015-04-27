@@ -26,7 +26,7 @@ function Canvas(context, dimensions, object, atime) {
   this.bDistanceLabel = true;
   this.bDateLabel     = true;
 
-  this._zoom    = 9.0;
+  this._zoom    = 70.0;
   this._rotateH = 15.0;
   this._rotateV = 50.0;
 
@@ -288,14 +288,13 @@ var canvas = {
       this.canvasContext.fillText(this.object.name, point1.x + 10, point1.y);
     }
 
-    //  Draw Orbit of Planets
+    // Draw Orbit of Planets
     if(Math.abs(this._epochPlanetOrbit - this.atime.julian) > 365.2422 * 5) {
       this._updatePlanetOrbit(this.atime);
     }
     this.canvasContext.font = font;
 
     if(this._orbitDisplay[0] || this._orbitDisplay[9]) {
-
       this._drawPlanetOrbit(this._planetOrbit[Planets.Neptune-1],
               colorPlanetOrbitUpper, colorPlanetOrbitLower);
     }
