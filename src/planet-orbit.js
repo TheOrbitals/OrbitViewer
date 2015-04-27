@@ -43,8 +43,8 @@ var planetOrbit = {
     var E = 0.0;
 
     for(var i = 0; i <= (this.division/4); i++, E += (360.0 / this.division)) {
-      var rcosv = planetElm.axis * (angles.udcos(E) - planetElm.e);
-      var rsinv = planetElm.axis * t * angles.udsin(E);
+      var rcosv = planetElm.axis * (angles.cos(E) - planetElm.e);
+      var rsinv = planetElm.axis * t * angles.sin(E);
       this.orbit[xp1++] = new Xyz(rcosv,        rsinv, 0.0);
       this.orbit[xp2--] = new Xyz(ae2 - rcosv,  rsinv, 0.0);
       this.orbit[xp3++] = new Xyz(ae2 - rcosv, -rsinv, 0.0);

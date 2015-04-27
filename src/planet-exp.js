@@ -345,22 +345,22 @@ var SunQ = [
 var getPosExp0 = function(fT) {
   var i, fLambda = 279.0358 + 360.00769 *
       fT + ( 1.9159 - 0.00005 * fT) *
-      angles.udsin((356.531)+ ( 359.991) * fT);
+      angles.sin((356.531)+ ( 359.991) * fT);
 
   for (i = 0; i < SunLambda.length; i++) {
-    fLambda += SunLambda[i].a * angles.udsin(SunLambda[i].b + SunLambda[i].c * fT);
+    fLambda += SunLambda[i].a * angles.sin(SunLambda[i].b + SunLambda[i].c * fT);
   }
 
   fLambda += 0.0057;
-  fLambda = angles.deg2rad(angles.degmal(fLambda));
+  fLambda = angles.deg2rad(angles.rounddeg(fLambda));
   var fBeta = 0.0;
 
   var fq = (- 0.007261+0.0000002 * fT) *
-      angles.udcos((356.53) +
+      angles.cos((356.53) +
       (359.991) * fT) + 0.000030;
 
   for (i = 0; i < SunQ.length; i++) {
-    fq += SunQ[i].a * angles.udcos(SunQ[i].b + SunQ[i].b * fT);
+    fq += SunQ[i].a * angles.cos(SunQ[i].b + SunQ[i].b * fT);
   }
 
   var fRadius = Math.pow(10.0, fq);
@@ -394,23 +394,23 @@ var getPosExp1 = function(planetNo, fT) {
       throw 'Arithmetic Exception';
   }
 
-  var L1 = (ParamP.L6 + ParamP.L7 * fT) * angles.udsin(ParamP.L8 + ParamP.L9 * fT);
+  var L1 = (ParamP.L6 + ParamP.L7 * fT) * angles.sin(ParamP.L8 + ParamP.L9 * fT);
   for (i = 0; i < ParamL1.length; i++) {
-    L1 += ParamL1[i].a * angles.udsin(ParamL1[i].b + ParamL1[i].c * fT);
+    L1 += ParamL1[i].a * angles.sin(ParamL1[i].b + ParamL1[i].c * fT);
   }
 
   var L0 = ParamP.L1 + ParamP.L2 * fT +
-      ParamP.L3 * angles.udsin(ParamP.L4 + ParamP.L5 * fT + 2.0 * L1);
+      ParamP.L3 * angles.sin(ParamP.L4 + ParamP.L5 * fT + 2.0 * L1);
   for (i = 0; i < ParamL0.length; i++) {
-    L0 += ParamL0[i].a * angles.udsin(ParamL0[i].b + ParamL0[i].c * fT);
+    L0 += ParamL0[i].a * angles.sin(ParamL0[i].b + ParamL0[i].c * fT);
   }
 
-  var fLambda = angles.deg2rad(angles.degmal(L0 + L1));
-  var fBeta = Math.asin(ParamP.B1 * angles.udsin(ParamP.B2 + ParamP.B3 * fT + L1));
+  var fLambda = angles.deg2rad(angles.rounddeg(L0 + L1));
+  var fBeta = Math.asin(ParamP.B1 * angles.sin(ParamP.B2 + ParamP.B3 * fT + L1));
   var fq = (ParamP.q1 + ParamP.q2 * fT) *
-      angles.udcos(ParamP.q3 + ParamP.q4 * fT) + ParamP.q5;
+      angles.cos(ParamP.q3 + ParamP.q4 * fT) + ParamP.q5;
   for (i = 0; i < ParamQ.length; i++) {
-    fq += ParamQ[i].a * angles.udcos(ParamQ[i].b + ParamQ[i].c * fT);
+    fq += ParamQ[i].a * angles.cos(ParamQ[i].b + ParamQ[i].c * fT);
   }
 
   var fRadius = Math.pow(10.0, fq);
@@ -434,9 +434,9 @@ var getPosExp2 = function(planetNo, fT) {
       ParamQ = JupiterQ;
       ParamP = JupiterP;
       fN  = 341.5208 + 30.34907 * fT;
-      fN += (0.0350 + 0.00028 * fT) * angles.udsin(245.94 - 30.349 * fT)+ 0.0004;
-      fN -= (0.0019 + 0.00002 * fT) * angles.udsin(162.78 +  0.38 * fT);
-      fq  = (0.000132 + 0.0000011 * fT) * angles.udcos(245.93 - 30.349 * fT);
+      fN += (0.0350 + 0.00028 * fT) * angles.sin(245.94 - 30.349 * fT)+ 0.0004;
+      fN -= (0.0019 + 0.00002 * fT) * angles.sin(162.78 +  0.38 * fT);
+      fq  = (0.000132 + 0.0000011 * fT) * angles.cos(245.93 - 30.349 * fT);
       break;
     case Planets.Saturn:
       ParamN = SaturnN;
@@ -444,12 +444,12 @@ var getPosExp2 = function(planetNo, fT) {
       ParamQ = SaturnQ;
       ParamP = SaturnP;
       fN  = 12.3042 +12.22117 * fT;
-      fN += (0.0934 + 0.00075 * fT) * angles.udsin(250.29 + 12.221 * fT)+ 0.0008;
-      fN += (0.0057 + 0.00005 * fT) * angles.udsin(265.8  - 11.81 * fT);
-      fN += (0.0049 + 0.00004 * fT) * angles.udsin(162.7  +  0.38 * fT);
-      fN += (0.0019 + 0.00002 * fT) * angles.udsin(262.0  + 24.44 * fT);
-      fq  = (0.000354 + 0.0000028 * fT) * angles.udcos( 70.28 + 12.22 * fT) + 0.000183;
-      fq += (0.000021 + 0.0000002 * fT) * angles.udcos(265.80 - 11.81  * fT);
+      fN += (0.0934 + 0.00075 * fT) * angles.sin(250.29 + 12.221 * fT)+ 0.0008;
+      fN += (0.0057 + 0.00005 * fT) * angles.sin(265.8  - 11.81 * fT);
+      fN += (0.0049 + 0.00004 * fT) * angles.sin(162.7  +  0.38 * fT);
+      fN += (0.0019 + 0.00002 * fT) * angles.sin(262.0  + 24.44 * fT);
+      fq  = (0.000354 + 0.0000028 * fT) * angles.cos( 70.28 + 12.22 * fT) + 0.000183;
+      fq += (0.000021 + 0.0000002 * fT) * angles.cos(265.80 - 11.81  * fT);
       break;
     default:
       throw "Arithmetic Exception";
@@ -457,33 +457,33 @@ var getPosExp2 = function(planetNo, fT) {
 
   // Lambda
   for (i = 0; i < ParamN.length; i++) {
-    fN += ParamN[i].a * angles.udsin(ParamN[i].b + ParamN[i].c * fT);
+    fN += ParamN[i].a * angles.sin(ParamN[i].b + ParamN[i].c * fT);
   }
 
-  var ff = fN + ParamP.f1 * angles.udsin(fN) +
-        ParamP.f2 * angles.udsin(2.0 * fN) +
-        ParamP.f3 * angles.udsin(3.0 * fN) +
-        ParamP.f4 * angles.udsin(4.0 * fN);
-  var fV = ParamP.V1 * angles.udsin(2.0 * ff + ParamP.V2);
+  var ff = fN + ParamP.f1 * angles.sin(fN) +
+        ParamP.f2 * angles.sin(2.0 * fN) +
+        ParamP.f3 * angles.sin(3.0 * fN) +
+        ParamP.f4 * angles.sin(4.0 * fN);
+  var fV = ParamP.V1 * angles.sin(2.0 * ff + ParamP.V2);
 
-  var fLambda = angles.deg2rad(angles.degmal(ff + fV +
+  var fLambda = angles.deg2rad(angles.rounddeg(ff + fV +
                     ParamP.L1 + ParamP.L2 * fT));
 
   // Beta
-  var fBeta = Math.asin(ParamP.B1 * angles.udsin(ff + ParamP.B2)) +
+  var fBeta = Math.asin(ParamP.B1 * angles.sin(ff + ParamP.B2)) +
               angles.deg2rad((ParamP.B3 + ParamP.B4 * fT) *
-              angles.udsin(ff + ParamP.B5));
+              angles.sin(ff + ParamP.B5));
   for (i = 0; i < ParamB.length; i++) {
-    fBeta += ParamB[i].a * angles.udsin(ParamB[i].b + ParamB[i].c * fT);
+    fBeta += ParamB[i].a * angles.sin(ParamB[i].b + ParamB[i].c * fT);
   }
 
   // Radius
   for (i = 0; i < ParamQ.length; i++) {
-    fq += ParamQ[i].a * angles.udcos(ParamQ[i].b + ParamQ[i].c * fT);
+    fq += ParamQ[i].a * angles.cos(ParamQ[i].b + ParamQ[i].c * fT);
   }
 
   var fr = Math.pow(10.0, fq);
-  var fRadius = fr * ParamP.r1 / ( 1.0 + ParamP.r2 * angles.udcos(ff));
+  var fRadius = fr * ParamP.r1 / ( 1.0 + ParamP.r2 * angles.cos(ff));
 
   return new Xyz(fRadius * Math.cos(fBeta) * Math.cos(fLambda),
            fRadius * Math.cos(fBeta) * Math.sin(fLambda),
@@ -505,22 +505,22 @@ var getPosExp3 = function(planetNo, fT2) {
 
       fLambda = 252.2502 + 149474.0714 * fT2;
       fLambda += (23.4405 + 0.0023 * fT2) *
-          angles.udcos(149472.5153 * fT2 + 84.7947);
+          angles.cos(149472.5153 * fT2 + 84.7947);
       fLambda += ( 2.9818 + 0.0006 * fT2) *
-          angles.udcos(298945.031 * fT2 + 259.589);
+          angles.cos(298945.031 * fT2 + 259.589);
 
       fBeta = (6.7057 + 0.0017 * fT2) *
-          angles.udcos(149472.886 * fT2 + 113.919);
+          angles.cos(149472.886 * fT2 + 113.919);
       fBeta += (1.4396 + 0.0005 * fT2) *
-          angles.udcos(0.37 * fT2 + 119.12);
+          angles.cos(0.37 * fT2 + 119.12);
       fBeta += (1.3643 + 0.0005 * fT2) *
-          angles.udcos(298945.40 * fT2 + 288.71);
+          angles.cos(298945.40 * fT2 + 288.71);
 
       fRadius = 0.395283 + 0.000002 * fT2;
       fRadius += (0.078341 + 0.000008 * fT2) *
-          angles.udcos(149472.515 * fT2 + 354.795);
+          angles.cos(149472.515 * fT2 + 354.795);
       fRadius += (0.007955 + 0.000002 * fT2) *
-          angles.udcos(298945.03 * fT2 + 169.59);
+          angles.cos(298945.03 * fT2 + 169.59);
       break;
     case Planets.Uranus:
       ParamL = UranusLambda;
@@ -528,18 +528,18 @@ var getPosExp3 = function(planetNo, fT2) {
       ParamR = UranusR;
 
       fLambda = 313.33676 + 428.72880 * fT2;
-      fLambda += 3.20671 * fT2 * angles.udcos(705.15539 * fT2 + 114.02740);
-      fLambda += 2.69325 * fT2 * angles.udcos(597.77389 * fT2 + 317.76510);
-      fLambda += 0.00015 * fT2 * angles.udcos(3798.6 * fT2 + 313.4);
+      fLambda += 3.20671 * fT2 * angles.cos(705.15539 * fT2 + 114.02740);
+      fLambda += 2.69325 * fT2 * angles.cos(597.77389 * fT2 + 317.76510);
+      fLambda += 0.00015 * fT2 * angles.cos(3798.6 * fT2 + 313.4);
 
       fBeta = -0.02997;
-      fBeta += 1.78488 * fT2 * angles.udcos(507.52281 * fT2 + 188.32394);
-      fBeta += 0.56518 * fT2 * angles.udcos(892.2869 * fT2 + 354.9571);
-      fBeta += 0.00036 * fT2 * angles.udcos(1526.5 * fT2 + 263.0);
+      fBeta += 1.78488 * fT2 * angles.cos(507.52281 * fT2 + 188.32394);
+      fBeta += 0.56518 * fT2 * angles.cos(892.2869 * fT2 + 354.9571);
+      fBeta += 0.00036 * fT2 * angles.cos(1526.5 * fT2 + 263.0);
 
       fRadius = 19.203034 + 0.042617 * fT2;
-      fRadius += 0.361949 * fT2 * angles.udcos(440.702 * fT2 + 19.879);
-      fRadius += 0.166685 * fT2 * angles.udcos(702.024 * fT2 + 307.419);
+      fRadius += 0.361949 * fT2 * angles.cos(440.702 * fT2 + 19.879);
+      fRadius += 0.166685 * fT2 * angles.cos(702.024 * fT2 + 307.419);
       break;
     case Planets.Neptune:
       ParamL = NeptuneLambda;
@@ -547,30 +547,30 @@ var getPosExp3 = function(planetNo, fT2) {
       ParamR = NeptuneR;
 
       fLambda = - 55.13323 + 219.93503 * fT2;
-      fLambda += 0.04403 * fT2 * angles.udcos(684.128 * fT2 + 332.797);
-      fLambda += 0.02928 * fT2 * angles.udcos(904.371 * fT2 + 342.114);
+      fLambda += 0.04403 * fT2 * angles.cos(684.128 * fT2 + 332.797);
+      fLambda += 0.02928 * fT2 * angles.cos(904.371 * fT2 + 342.114);
 
       fBeta = 0.01725;
 
       fRadius = 30.073033;
-      fRadius += 0.009784 * fT2 * angles.udcos(515.2 * fT2 + 195.7);
+      fRadius += 0.009784 * fT2 * angles.cos(515.2 * fT2 + 195.7);
       break;
     default:
       throw "Arithmetic Exception";
   }
 
   for(i = 0; i < ParamL.length; i++) {
-    fLambda += ParamL[i].a * angles.udcos(ParamL[i].b * fT2 + ParamL[i].c);
+    fLambda += ParamL[i].a * angles.cos(ParamL[i].b * fT2 + ParamL[i].c);
   }
-  fLambda = angles.deg2rad(angles.degmal(fLambda));
+  fLambda = angles.deg2rad(angles.rounddeg(fLambda));
 
   for(i = 0; i < ParamB.length; i++) {
-    fBeta += ParamB[i].a * angles.udcos(ParamB[i].b * fT2 + ParamB[i].c);
+    fBeta += ParamB[i].a * angles.cos(ParamB[i].b * fT2 + ParamB[i].c);
   }
   fBeta = angles.deg2rad(fBeta);
 
   for(i = 0; i < ParamR.length; i++) {
-    fRadius += ParamR[i].a * angles.udcos(ParamR[i].b * fT2 + ParamR[i].c);
+    fRadius += ParamR[i].a * angles.cos(ParamR[i].b * fT2 + ParamR[i].c);
   }
 
   return new Xyz(fRadius * Math.cos(fBeta) * Math.cos(fLambda),
