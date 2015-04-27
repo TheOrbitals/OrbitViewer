@@ -1,4 +1,4 @@
-var Xyz = require('./xyz');
+var Xyz = require('xyzed');
 var Matrix = require('./matrix');
 var PlanetElm = require('./planet-elm');
 var angles = require('angle-functions');

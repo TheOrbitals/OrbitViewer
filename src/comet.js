@@ -1,4 +1,4 @@
-var Xyz    = require('./xyz');
+var Xyz    = require('xyzed');
 var ATime  = require('./atime');
 var Matrix = require('./matrix');
 

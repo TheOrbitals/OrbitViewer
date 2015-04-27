@@ -1,4 +1,4 @@
-var Xyz    = require('./src/xyz');
+var Xyz    = require('xyzed');
 var ATime  = require('./src/atime');
 var Comet  = require('./src/comet');
 var Planet = require('./src/planet');
