@@ -1,4 +1,4 @@
-var UdMath    = require('./udmath');
+var angles    = require('angle-funcs');
 var PlanetElm = require('./planet-elm');
 var PlanetExp = require('./planet-exp');
 

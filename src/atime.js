@@ -124,10 +124,10 @@ var atime = {
       nDay1 = 0;
     } else if (fHms1 >= 24.0 * 60.0 * 60.0) {
       nDay1 = Math.floor(fHms1 / 24.0 / 60.0 / 60.0);
-      fHms1 = UdMath.fmod(fHms1, 24.0 * 60.0 * 60.0);
+      fHms1 = angles.fmod(fHms1, 24.0 * 60.0 * 60.0);
     } else {
       nDay1 = Math.ceil(fHms1 / 24.0 / 60.0 / 60.0) - 1;
-      fHms1 = UdMath.fmod(fHms1, 24.0 * 60.0 * 60.0) + 24.0 * 60.0 * 60.0;
+      fHms1 = angles.fmod(fHms1, 24.0 * 60.0 * 60.0) + 24.0 * 60.0 * 60.0;
     }
 
     var nNewHour = Math.floor(fHms1 / 60.0 / 60.0);

@@ -1,6 +1,6 @@
 var Xyz     = require('./xyz');
 var ATime   = require('./atime');
-var UdMath  = require('./udmath');
+var angles  = require('angle-funcs');
 var Planets = require('./planets');
 
 /**
@@ -234,18 +234,18 @@ var planetElm = {
     E = M = this.l - (this.peri + this.node);
     do {
       oldE = E;
-      E = M + re * UdMath.udsin(oldE);
+      E = M + re * angles.udsin(oldE);
     } while (Math.abs(E - oldE) > 1.0e-5 * 180.0 / Math.PI);
-    var px = this.axis * (UdMath.udcos(E) - this.e);
+    var px = this.axis * (angles.udcos(E) - this.e);
     var py = this.axis * Math.sqrt(1.0 - this.e * this.e) *
-        UdMath.udsin(E);
+        angles.udsin(E);
 
-    var sinperi = UdMath.udsin(this.peri);
-    var cosperi = UdMath.udcos(this.peri);
-    var sinnode = UdMath.udsin(this.node);
-    var cosnode = UdMath.udcos(this.node);
-    var sinincl = UdMath.udsin(this.incl);
-    var cosincl = UdMath.udcos(this.incl);
+    var sinperi = angles.udsin(this.peri);
+    var cosperi = angles.udcos(this.peri);
+    var sinnode = angles.udsin(this.node);
+    var cosnode = angles.udcos(this.node);
+    var sinincl = angles.udsin(this.incl);
+    var cosincl = angles.udcos(this.incl);
 
     var xc =  px * (cosnode * cosperi - sinnode * cosincl * sinperi) -
         py * (cosnode * sinperi + sinnode * cosincl * cosperi);
@@ -303,11 +303,11 @@ var planetElm = {
     var T = year/1000.0;
 
     var L7 = (0.42 - 0.075*T + 0.015*T*T - 0.003*T*T*T) *
-        UdMath.udsin( (T - 0.62)*360.0/0.925 );
-    var PS7 = 0.02 * UdMath.udsin( (T + 0.1)*360.0/0.925 );
-    var PH7 = 0.03 * UdMath.udsin( (T + 0.36)*360.0/0.925 );
-    var ETA = UdMath.degmal(86.1 + 0.033459 * ( jd - 1721057.0 ));
-    var ZETA = UdMath.degmal(89.1 + 0.049630 * ( jd - 1721057.0 ));
+        angles.udsin( (T - 0.62)*360.0/0.925 );
+    var PS7 = 0.02 * angles.udsin( (T + 0.1)*360.0/0.925 );
+    var PH7 = 0.03 * angles.udsin( (T + 0.36)*360.0/0.925 );
+    var ETA = angles.degmal(86.1 + 0.033459 * ( jd - 1721057.0 ));
+    var ZETA = angles.degmal(89.1 + 0.049630 * ( jd - 1721057.0 ));
     var L8 = this._perturbationElement(ETA, ZETA, perturbJup1)/1000.0;
     var PS8 = this._perturbationElement(ETA, ZETA, perturbJup2)/1000.0;
     var PH8 = this._perturbationElement(ETA, ZETA, perturbJup3)/1000.0;
@@ -317,8 +317,8 @@ var planetElm = {
     if (PH < 1.5) PH = 1.5;
 
     this.l += ( L7 + L8 );
-    this.peri += (PS7 + PS8) / UdMath.udsin(PH);
-    this.e = UdMath.udsin(PH + PH7 + PH8);
+    this.peri += (PS7 + PS8) / angles.udsin(PH);
+    this.e = angles.udsin(PH + PH7 + PH8);
   },
 
   /**
@@ -329,12 +329,12 @@ var planetElm = {
     var T = year/1000.0;
 
     var AT = 0.88 - 0.0633*T + 0.03*T*T - 0.0006*T*T*T;
-    var L7 = -0.50 + AT*UdMath.udsin((T - 0.145)*360.0/0.95);
-    var PS7 = -0.50 + (0.10 - 0.005*T) * UdMath.udsin((T - 0.54)*360.0/0.95);
-    var PH7 = -0.50 + (0.10 - 0.005*T) * UdMath.udsin((T - 0.32)*360.0/0.95);
-    var AX7 = -0.050 + (0.004 - 0.0005*T) * UdMath.udsin((T - 0.35)*360.0/0.95);
-    var ETA = UdMath.degmal(86.1 + 0.033459 * ( jd - 1721057.0 ));
-    var ZETA = UdMath.degmal(89.1 + 0.049630 * ( jd - 1721057.0 ));
+    var L7 = -0.50 + AT*angles.udsin((T - 0.145)*360.0/0.95);
+    var PS7 = -0.50 + (0.10 - 0.005*T) * angles.udsin((T - 0.54)*360.0/0.95);
+    var PH7 = -0.50 + (0.10 - 0.005*T) * angles.udsin((T - 0.32)*360.0/0.95);
+    var AX7 = -0.050 + (0.004 - 0.0005*T) * angles.udsin((T - 0.35)*360.0/0.95);
+    var ETA = angles.degmal(86.1 + 0.033459 * ( jd - 1721057.0 ));
+    var ZETA = angles.degmal(89.1 + 0.049630 * ( jd - 1721057.0 ));
     var L8 = this._perturbationElement(ETA, ZETA, perturbSat1)/100.0;
     var PS8 = this._perturbationElement(ETA, ZETA, perturbSat2)/100.0;
     var PH8 = this._perturbationElement(ETA, ZETA, perturbSat3)/100.0;
@@ -345,8 +345,8 @@ var planetElm = {
     if (PH < 2.0) PH = 2.0;
 
     this.l += ( L7 + L8 );
-    this.peri += (PS7 + PS8) / UdMath.udsin(PH);
-    this.e = UdMath.udsin(PH + PH7 + PH8);
+    this.peri += (PS7 + PS8) / angles.udsin(PH);
+    this.e = angles.udsin(PH + PH7 + PH8);
     this.axis += AX7 + AX8;
   },
 
@@ -379,21 +379,21 @@ var planetElm = {
     }
 
     /* M+peri+node */
-    this.l = UdMath.degmal(elmCf.l + elmCf.L1 * C1 +
+    this.l = angles.degmal(elmCf.l + elmCf.L1 * C1 +
                elmCf.L2 * C2 + elmCf.L3 * C1 * C2);
     /* Ascending Node */
-    this.node = UdMath.degmal(elmCf.node + elmCf.n1 * C1 +
+    this.node = angles.degmal(elmCf.node + elmCf.n1 * C1 +
                elmCf.n2 * C2 + elmCf.n3 * C1 * C2);
     /* Argument of Perihelion */
-    this.peri = UdMath.degmal(elmCf.peri + elmCf.p1 * C1 +
+    this.peri = angles.degmal(elmCf.peri + elmCf.p1 * C1 +
                elmCf.p2 * C2 + elmCf.p3 * C1 * C2 - this.node);
     /* Semimajor Axis */
     this.axis = elmCf.axis;
     /* Eccentricity */
-    this.e    = UdMath.degmal(elmCf.e + elmCf.e1 * C1 +
+    this.e    = angles.degmal(elmCf.e + elmCf.e1 * C1 +
                elmCf.e2 * C2 + elmCf.e3 * C1 * C2 );
     /* Inclination */
-    this.incl = UdMath.degmal(elmCf.incl + elmCf.i1 * C1 +
+    this.incl = angles.degmal(elmCf.incl + elmCf.i1 * C1 +
                elmCf.i2 * C2 + elmCf.i3 * C1 * C2);
 
     switch (planetNo) {
@@ -427,17 +427,17 @@ var planetElm = {
     }
 
     /* M+peri+node */
-    this.l    =  UdMath.degmal(elmCf.l + elmCf.L1 * d + elmCf.L2 *T2);
+    this.l    =  angles.degmal(elmCf.l + elmCf.L1 * d + elmCf.L2 *T2);
     /* Ascending Node */
-    this.node =  UdMath.degmal(elmCf.node + elmCf.n1 * T1 + elmCf.n2 *T2);
+    this.node =  angles.degmal(elmCf.node + elmCf.n1 * T1 + elmCf.n2 *T2);
     /* Argument of Perihelion */
-    this.peri =  UdMath.degmal(elmCf.peri + elmCf.p1 * T1 + elmCf.p2 *T2 - this.node);
+    this.peri =  angles.degmal(elmCf.peri + elmCf.p1 * T1 + elmCf.p2 *T2 - this.node);
     /* Semimajor Axis */
-    this.axis = UdMath.degmal(elmCf.axis + elmCf.a1 * T1 + elmCf.a2 *T2);
+    this.axis = angles.degmal(elmCf.axis + elmCf.a1 * T1 + elmCf.a2 *T2);
     /* Eccentricity */
-    this.e    =  UdMath.degmal(elmCf.e + elmCf.e1 * T1 + elmCf.e2 *T2);
+    this.e    =  angles.degmal(elmCf.e + elmCf.e1 * T1 + elmCf.e2 *T2);
     /* Inclination */
-    this.incl =  UdMath.degmal(elmCf.incl + elmCf.i1 * T1 + elmCf.i2 *T2);
+    this.incl =  angles.degmal(elmCf.incl + elmCf.i1 * T1 + elmCf.i2 *T2);
   },
 
   /**
@@ -446,8 +446,8 @@ var planetElm = {
   _getPlanetElmEarth: function(jd) {
     var c = (jd - ATime.JD1900)/36525.0;
     var c2 = c * c;
-    this.l = 180.0 + UdMath.degmal(280.6824 + 36000.769325*c + 7.22222e-4*c2);
-    this.peri = 180.0 + UdMath.degmal(281.2206 +
+    this.l = 180.0 + angles.degmal(280.6824 + 36000.769325*c + 7.22222e-4*c2);
+    this.peri = 180.0 + angles.degmal(281.2206 +
       1.717697*c + 4.83333e-4*c2 + 2.77777e-6*c*c2);
     this.node = 0.0; /* no ascending node for the Earth */
     this.incl = 0.0; /* no inclination for the Earth */

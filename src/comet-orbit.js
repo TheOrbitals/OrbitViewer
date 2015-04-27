@@ -1,6 +1,6 @@
 var Xyz    = require('./xyz');
 var ATime  = require('./atime');
-var UdMath = require('./udmath');
+var angles = require('angle-funcs');
 var Matrix = require('./matrix');
 
 /**
@@ -94,13 +94,13 @@ var cometOrbit = {
     var nIdx1, nIdx2;
     var ft = Math.sqrt(comet.e * comet.e - 1.0);
     var fAxis = comet.e / (comet.e - 1.0);
-    var fdF = UdMath.arccosh((maxOrbit + fAxis) /
+    var fdF = angles.arccosh((maxOrbit + fAxis) /
               (fAxis * comet.e)) / (this.division / 2);
     var fF = 0.0;
     nIdx1 = nIdx2 = this.division / 2;
     for (var i = 0; i <= (this.division / 2); i++, fF += fdF) {
-      var fRCosV = fAxis * (comet.e - UdMath.cosh(fF));
-      var fRSinV = fAxis * ft * UdMath.sinh(fF);
+      var fRCosV = fAxis * (comet.e - angles.cosh(fF));
+      var fRSinV = fAxis * ft * angles.sinh(fF);
       this.orbit[nIdx1++] = new Xyz(fRCosV,  fRSinV, 0.0);
       this.orbit[nIdx2--] = new Xyz(fRCosV, -fRSinV, 0.0);
     }
