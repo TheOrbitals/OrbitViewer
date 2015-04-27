@@ -1,7 +1,7 @@
 var Xyz = require('./xyz');
-var angles = require('angle-funcs');
 var Matrix = require('./matrix');
 var PlanetElm = require('./planet-elm');
+var angles = require('angle-functions');
 
 /**
  * PlanetOrbit module

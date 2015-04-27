@@ -4,7 +4,7 @@
   "description": "A tool to visualize the orbits of planets and near earth objects",
   "main": "main.js",
   "dependencies": {
-    "angle-funcs": "git://github.com/theorbitals/angle-funcs.git"
+    "angle-functions": "git://github.com/theorbitals/angle-functions.git"
   },
   "devDependencies": {
     "browserify": "^9.0.8",

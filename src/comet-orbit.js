@@ -1,7 +1,7 @@
 var Xyz    = require('./xyz');
 var ATime  = require('./atime');
-var angles = require('angle-funcs');
 var Matrix = require('./matrix');
+var angles = require('angle-functions');
 
 /**
  * CometOrbit module

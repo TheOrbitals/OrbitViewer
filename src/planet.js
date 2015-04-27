@@ -1,6 +1,6 @@
-var angles    = require('angle-funcs');
 var PlanetElm = require('./planet-elm');
 var PlanetExp = require('./planet-exp');
+var angles    = require('angle-functions');
 
 /**
  * Planet module

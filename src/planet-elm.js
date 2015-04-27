@@ -1,7 +1,7 @@
 var Xyz     = require('./xyz');
 var ATime   = require('./atime');
-var angles  = require('angle-funcs');
 var Planets = require('./planets');
+var angles  = require('angle-functions');
 
 /**
  * PlanetElm module

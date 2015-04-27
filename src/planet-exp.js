@@ -1,6 +1,6 @@
 var Xyz    = require('./xyz');
-var angles = require('angle-funcs');
 var Planets = require('./planets');
+var angles = require('angle-functions');
 
 /**
  * Planet Position by Expansion
