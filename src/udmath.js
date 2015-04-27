@@ -15,21 +15,21 @@ module.exports = {
    * sin for degree
    */
   udsin: function(x) {
-    return Math.sin(x * Math.PI / 180.0);
+    return Math.sin(this.deg2rad(x));
   },
 
   /**
    * cos for degree
    */
   udcos: function(x) {
-    return Math.cos(x * Math.PI / 180.0);
+    return Math.cos(this.deg2rad(x));
   },
 
   /**
    * tan for degree
    */
   udtan: function(x) {
-    return Math.tan(x * Math.PI / 180.0);
+    return Math.tan(this.deg2rad(x));
   },
 
   /**

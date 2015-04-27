@@ -2,9 +2,11 @@
  * Astronomical time module
  */
 
-// Astronomical Constants
+// Constants
+var incTime = 1;        // increment
+var decTime = -1;       // decrement
 var JD2000 = 2451545.0; // Julian Day on 2000.1.1 12h ET
-var JD1900 = 2415021.0; // Julian Day 1900.1.1 12h ET
+var JD1900 = 2415021.0; // Julian Day on 1900.1.1 12h ET
 
 // Constructor
 var ATime = function(datetime) {
@@ -38,13 +40,6 @@ var ATime = function(datetime) {
   this.time1 = this._makeTime1(); // Origin 1974/12/31  0h ET
   this.time2 = this._makeTime2(); // Origin 2000/01/01 12h ET
 };
-
-// Static members
-ATime.intTime = 1;
-ATime.decTime = -1;
-ATime.getEp = getEp;
-ATime.months = months;
-ATime.getMonthAbbr = getMonthAbbr;
 
 // Instance members
 var atime = {
@@ -238,16 +233,13 @@ var getMonthAbbr = function(month) {
 var getToday = function() {
   var date = new Date();
   var today = {
-    year: date.getFullYear(),
-    month: date.getMonth()+1,
-    day: date.getDate(),
-    // hour: date.getHours()+1,
-    // minute: date.getMinutes(),
-    // second: date.getSeconds(),
     hour: 0,
     minute: 0,
     second: 0,
-    timezone: 0.0
+    timezone: 0.0,
+    day: date.getDate(),
+    month: date.getMonth()+1,
+    year: date.getFullYear()
   };
   return new ATime(today);
 };
@@ -263,13 +255,14 @@ var ymdStringToATime = function(strYmd) {
 
 // Static members
 ATime.getEp = getEp;
-ATime.getToday = getToday;
-ATime.ymdStringToATime = ymdStringToATime;
 ATime.JD2000 = JD2000;
 ATime.JD1900 = JD1900;
+ATime.incTime = incTime;
+ATime.decTime = decTime;
+ATime.getToday = getToday;
+ATime.ymdStringToATime = ymdStringToATime;
+ATime.getMonthAbbr = getMonthAbbr;
+ATime.months = months;
 
-/**
- * Wire up the module
- */
 ATime.prototype = atime;
 module.exports = ATime;

@@ -1,7 +1,7 @@
 {
   "name": "OrbitViewer",
   "version": "2.0.0",
-  "description": "A tool to visualize the planets and near earth objects",
+  "description": "A tool to visualize the orbits of planets and near earth objects",
   "main": "main.js",
   "dependencies": {},
   "devDependencies": {
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/OrbitViewerNZ/OrbitViewer.git"
+    "url": "https://github.com/TheOrbitals/OrbitViewer.git"
   },
   "keywords": [
     "orbit",
@@ -27,7 +27,7 @@
   "author": "Don Smith",
   "license": "GPLv2",
   "bugs": {
-    "url": "https://github.com/OrbitViewerNZ/OrbitViewer/issues"
+    "url": "https://github.com/TheOrbitals/OrbitViewer/issues"
   },
   "homepage": "https://stemn.com/projects/orbit-viewer"
 }

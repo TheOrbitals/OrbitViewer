@@ -31,8 +31,6 @@ node_modules
 bower_components
 
 # Project related files
-module-test
 presentation
-java-applet
-original
 assets
+main.js
