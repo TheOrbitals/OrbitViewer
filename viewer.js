@@ -1,11 +1,9 @@
+var event  = require('dom-events');
 var ATime  = require('./src/atime');
 var Comet  = require('./src/comet');
-var Canvas = require('./canvas.js');
-var Player = require('./player.js');
-
-var canvasElement = document.getElementById("canvas");
-var ctx = canvasElement.getContext("2d");
-var todaytime = ATime.getToday();
+var Canvas = require('./canvas');
+var Player = require('./player');
+var config = require('./config');
 
 var params = {
   name   : 'Ceres',
@@ -42,8 +40,66 @@ var objectDef = {
   equinox: params.equinox
 };
 
-var object = new Comet(objectDef);
+var canvasElement = document.getElementById("canvas");
+var ctx = canvasElement.getContext("2d");
 var dimensions = {width: canvasElement.width, height: canvasElement.height};
-var orbitCanvas = new Canvas(ctx, dimensions, object, todaytime);
+config.dimensions = dimensions;
+config.datetime = ATime.getToday();
+var object = new Comet(objectDef);
+var orbitCanvas = new Canvas(ctx, config, object);
 orbitCanvas.update();
+
+var applyConfig = function(){
+  zoomValue.innerText = config.zoom;
+  vRotValue.innerText = config.verticalRotation;
+  hRotValue.innerText = config.horizontalRotation;
+  orbitCanvas.setConfig(config);
+  orbitCanvas.update();
+};
+
+/**
+ * Zoom
+ */
+
+var zoomMax = 600;
+var zoom = document.getElementById('zoom');
+var zoomValue = document.getElementById('zoomValue');
+
+event.on(zoom, 'input', function(){
+  var value = this.value;
+  if(value >= zoomMax) return;
+  config.zoom = value;
+  applyConfig();
+});
+
+/**
+ * Horizontal rotation
+ */
+
+var hRotMax = 365;
+var hRot = document.getElementById('hRot');
+var hRotValue = document.getElementById('hRotValue');
+
+event.on(hRot, 'input', function(){
+  var value = this.value;
+  if(value >= hRotMax) return;
+  config.horizontalRotation = value;
+  applyConfig();
+});
+
+/**
+ * Vertical rotation
+ */
+
+var vRotMax = 180;
+var vRot = document.getElementById('vRot');
+var vRotValue = document.getElementById('vRotValue');
+
+event.on(vRot, 'input', function(){
+  var value = this.value;
+  if(value >= vRotMax) return;
+  config.verticalRotation = value;
+  applyConfig();
+});
+
 
