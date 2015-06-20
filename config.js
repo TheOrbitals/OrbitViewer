@@ -19,4 +19,4 @@ module.exports = {
 
   font: '12pt Helvetica'
 
-};
+}

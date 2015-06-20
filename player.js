@@ -3,11 +3,9 @@
  */
 
 // Constructor
-var Player = function() {
-
-};
+var Player = function () {}
 
 /**
  * Wire up the module
  */
-module.exports = Player;
+module.exports = Player
