@@ -137,15 +137,21 @@ var atime = {
     /**
      * Next, calculate new year, month, day
      */
-    var newDate = new ATime(this.getYear(), this.getMonth(),
-      this.getDay(), 12, 0, 0.0, 0.0)
-    var julian = newDate.getJd()
+    var newDate = new ATime({
+      year: this.year,
+      month: this.month,
+      day: this.day,
+      minute: 12,
+      second: 0,
+      timezone: 0.0
+    })
+    var julian = newDate.julian
     julian += (incOrDec === incTime) ? nDay1 + span.day : nDay1 - span.day
-    newDate = new ATime(julian, 0.0)
+    newDate = new ATime({julian: julian, timezone: 0.0})
 
-    var nNewYear = newDate.getYear()
-    var nNewMonth = newDate.getMonth()
-    var nNewDay = newDate.getDay()
+    var nNewYear = newDate.year
+    var nNewMonth = newDate.month
+    var nNewDay = newDate.day
     nNewMonth += (incOrDec === incTime) ? span.month : -span.month
     if (nNewMonth < 1) {
       nNewYear -= nNewMonth / 12 + 1
@@ -164,10 +170,17 @@ var atime = {
         nNewDay = 15
       }
     }
-    newDate = new ATime(nNewYear, nNewMonth, nNewDay, 12, 0, 0, 0.0)
-    nNewYear = newDate.getYear()
-    nNewMonth = newDate.getMonth()
-    nNewDay = newDate.getDay()
+    newDate = new ATime({
+      year: nNewYear,
+      month: nNewMonth,
+      day: nNewDay,
+      minute: 12,
+      second: 0,
+      timezone: 0
+    })
+    nNewYear = newDate.year
+    nNewMonth = newDate.month
+    nNewDay = newDate.day
 
     this.year = nNewYear
     this.month = nNewMonth

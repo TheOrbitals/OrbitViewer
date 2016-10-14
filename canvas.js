@@ -3,6 +3,7 @@ var ATime = require('./src/atime')
 var Planet = require('./src/planet')
 var Matrix = require('./src/matrix')
 var Planets = require('./src/planets')
+var TimeSpan = require('./src/time-span')
 var CometOrbit = require('./src/comet-orbit')
 var PlanetOrbit = require('./src/planet-orbit')
 
@@ -28,7 +29,11 @@ var colorPlanetName = '#00AA00'
 var colorSun = '#D04040'
 var colorAxisPlus = '#FFFF00'
 var colorAxisMinus = '#555500'
-var colorInformation = '#FFFFFF'
+// var colorInformation = '#FFFFFF'
+
+// Lines
+var axisLineWidth = 1
+var orbitLineWidth = 2
 
 // Other private statics for the module
 var planetCount = 8 // TODO: Get rid of this
@@ -91,6 +96,19 @@ var canvas = {
     for (var i = 0; i < planetCount; i++) {
       this._planetPos[i] = Planet.getPosition(Planets.Mercury + i, atime)
     }
+  },
+
+  play: function () {
+    var count = 0
+    var handle = setInterval(function () {
+      var t = this.atime
+      var span = new TimeSpan(t.year, t.month, t.day, t.hour, t.minute, t.second)
+      this.atime._changeDate(span, 1)
+      this.setDate(this.atime)
+      this.update()
+      count++
+      if (count > 100) clearInterval(handle)
+    }, 20)
   },
 
   update: function () {
@@ -160,7 +178,7 @@ var canvas = {
         if (xyz.z >= 0.0) {
           this.canvasContext.strokeStyle = colorObjectOrbitUpper
         } else {
-          this.canvasContext.lineWidth = 3
+          this.canvasContext.lineWidth = orbitLineWidth
           this.canvasContext.strokeStyle = colorObjectOrbitLower
         }
         xyz = xyz.rotate(this._mtxRotate)
@@ -323,6 +341,7 @@ var canvas = {
   _drawEclipticAxis: function () {
     var xyz, point
     this.canvasContext.strokeStyle = colorAxisMinus
+    this.canvasContext.lineWidth = axisLineWidth
 
     // -X
     xyz = (new Xyz(-50.0, 0.0, 0.0)).rotate(this._mtxRotate)

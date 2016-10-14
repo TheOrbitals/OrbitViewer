@@ -31,6 +31,4 @@ node_modules
 bower_components
 
 # Project related files
-presentation
-assets
 main.js
