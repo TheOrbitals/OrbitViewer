@@ -1,7 +1,7 @@
 Orbit Viewer
 =========================
 
-Orbit Viewer is an interactive visualization tool used to view near earth objects (comets and asteroids) in relation to the planets. This project was started during the [2015 International Space Apps Challenge](https://2015.spaceappschallenge.org/).
+Orbit Viewer is an interactive visualization tool used to view near earth objects (comets and asteroids) in relation to the planets. This project was started during the [2015 International Space Apps Challenge](https://2015.spaceappschallenge.org/). If you're interested, you can watch the [30 second video project concept](https://vimeo.com/124757184) and the 11 minute [hackathon presentation and Q&A](https://www.youtube.com/embed/Pp_ZC7IZj-o?start=5560).
 
 ## Origins & goal
 
