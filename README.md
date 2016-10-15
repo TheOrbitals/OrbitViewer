@@ -5,7 +5,7 @@ Orbit Viewer is an interactive visualization tool used to view near earth object
 
 ## Origins & goal
 
-The code base is a direct port of a Java Applet of the same name by Osamu Ajiki and Ron Baalke. You can find more about that project at [its source code repo](https://github.com/TheOrbitals/OrbitViewerApplet). This applet is currently being used on NASA's website. You can see an example [here](http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=6344%20P-L;orb=1). This new Orbit Viewer project aims to provide an alternative solution to the existing Orbit Viewer applet.
+The code base is a direct port of a Java Applet of the same name by Osamu Ajiki and Ron Baalke. You can find more about that project on [its website](http://www.astroarts.com/products/orbitviewer/index.html) and at its [source code repo](https://github.com/TheOrbitals/OrbitViewerApplet). This applet is currently being used on NASA's website. You can see an example [here](http://ssd.jpl.nasa.gov/sbdb.cgi?sstr=6344%20P-L;orb=1). This new Orbit Viewer project aims to provide an alternative solution to the existing Orbit Viewer applet.
 
 ## Process
 
