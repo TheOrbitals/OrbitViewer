@@ -1,6 +1,8 @@
 Developer Notes
 ===================
 
+This code is written in ES6/2015 with the exception of the `import` syntax because Node.js is not yet supporting it.
+
 ## time.js
 
  - Line 68: Ensure reference "Astro.JD2000"

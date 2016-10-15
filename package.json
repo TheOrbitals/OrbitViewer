@@ -3,6 +3,11 @@
   "version": "2.0.0",
   "description": "A tool to visualize the orbits of planets and near earth objects",
   "main": "main.js",
+  "scripts": {
+    "test": "tape tests/**/*.tests.js | tap-spec",
+    "watch": "watchify viewer.js -o main.js --poll --verbose",
+    "build": "browserify viewer.js -o main.js"
+  },
   "dependencies": {
     "angle-functions": "^0.2.0",
     "dom-events": "^0.1.1",
@@ -11,19 +16,13 @@
   },
   "devDependencies": {
     "browserify": "^9.0.8",
-    "gulp": "^3.8.11",
-    "tape": "^4.0.0",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.6.2",
     "watchify": "^3.1.2"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "watchify viewer.js -o main.js --poll --verbose",
-    "build": "browserify viewer.js -o main.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/TheOrbitals/OrbitViewer.git"
-  },
+  "author": "Don Smith <locksmithdon@gmail.com>",
+  "homepage": "https://stemn.com/projects/orbit-viewer",
+  "license": "GPLv2",
   "keywords": [
     "orbit",
     "neo",
@@ -31,10 +30,11 @@
     "jpl",
     "visualization"
   ],
-  "author": "Don Smith",
-  "license": "GPLv2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheOrbitals/OrbitViewer.git"
+  },
   "bugs": {
     "url": "https://github.com/TheOrbitals/OrbitViewer/issues"
-  },
-  "homepage": "https://stemn.com/projects/orbit-viewer"
+  }
 }
