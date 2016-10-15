@@ -9,12 +9,14 @@
     "xyzed": "^0.1.0"
   },
   "devDependencies": {
+    "bower": "^1.7.9",
     "browserify": "^9.0.8",
     "gulp": "^3.8.11",
     "tape": "^4.0.0",
     "watchify": "^3.1.2"
   },
   "scripts": {
+    "bower": "bower",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "watchify viewer.js -o main.js --poll --verbose",
     "build": "browserify viewer.js -o main.js"
