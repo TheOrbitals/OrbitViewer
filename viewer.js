@@ -180,44 +180,6 @@ fab.on('mouse:down', function (options) {
 })
 
 /**
- * Animation controls
- */
-
-var playCircle = new f.fabric.Circle({
-  selectable: false,
-  left: document.getElementById('control-canvas').width / 2 - 30,
-  top: 382,
-  stroke: 'white',
-  strokeWidth: 2,
-  fill: 'rgba(0, 0, 0, 0.5)',
-  radius: 30
-})
-playCircle.id = 'playCircle'
-var playTriangle = new f.fabric.Triangle({
-  selectable: false,
-  left: document.getElementById('control-canvas').width / 2 + 12,
-  top: 400,
-  stroke: 'white',
-  strokeWidth: 2,
-  fill: 'rgb(255, 255, 255)',
-  angle: 90,
-  height: 16,
-  width: 26
-})
-playTriangle.id = 'playTriangle'
-
-fab.on('mouse:down', function (options) {
-  var t = options.target
-  if (t) {
-    if (t.id === 'playCircle' || t.id === 'playTriangle') {
-      orbitCanvas.play()
-    }
-  }
-})
-fab.add(playCircle)
-fab.add(playTriangle)
-
-/**
  * Rotation event handlers
  */
 var originX = 0
