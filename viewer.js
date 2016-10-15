@@ -1,9 +1,10 @@
-var f = require('./bower_components/fabric/dist/fabric.require.js')
+// var f = require('./bower_components/fabric/dist/fabric.require.js')
+var f = require('fabric')
 var event = require('dom-events')
 var ATime = require('./src/atime')
 var Comet = require('./src/comet')
 var Canvas = require('./canvas')
-var Player = require('./player')
+// var Player = require('./player')
 var config = require('./config')
 
 /**
