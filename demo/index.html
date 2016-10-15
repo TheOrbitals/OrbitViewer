@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Orbit Viewer</title>
+  <style>
+  body {
+    font-family: Helvetica, Arial;
+  }
+  .container {
+    width: 860px;
+    margin: 0px auto;
+  }
+  .all-canvas-container {
+    position: relative;
+    height: 462px;
+    width: 785px;
+  }
+  .canvas {
+    -webkit-user-select: none;
+    position: absolute;
+    height: 462px;
+    width: 785px;
+    left: 0px;
+    top: 0px;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Orbit Viewer Demo</h1>
+    <p>Just a small demo to show progress</p>
+
+    <div class="all-canvas-container">
+      <canvas id="display-canvas" width="785" height="462" class="canvas"></canvas>
+      <canvas id="control-canvas" width="785" height="462" class="canvas"></canvas>
+    </div>
+
+    <p>Use your mouse for horizontal and vertical rotation</p>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

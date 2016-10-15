@@ -9,7 +9,7 @@ The code base is a direct port of a Java Applet of the same name by Osamu Ajiki 
 
 ## Process
 
-In the near term, this project will achieve feature parity with the original Orbit Viewer but using current web technologies (specifically the Canvas API). After that, it will add a number of features that make it an even better experience on the web such as being embedded in other pages and fullscreen support.
+In the near term, this project will achieve feature parity with the original Orbit Viewer using current web technologies (specifically the ES6 and the Canvas API). After that, it will add a number of features that make it an even better experience on the web such as being embedded in other pages and fullscreen support.
 
 This readme will evolve as the more of the project is implemented. You can see the current progress by viewing the demo page.
 
@@ -26,17 +26,11 @@ Build the source files into a single file. You don't need to do this if you're g
 
     npm run build
 
-Spin up a local HTTP server. If you have a different way than this, go for it.
+Open `demo/index.html` to view the demo.
 
-    python -m SimpleHTTPServer
-
-Set up a watcher so `main.js` gets rebuilt automatically as you save your changes.
+Set up a watcher so `demo/main.js` gets rebuilt automatically as you save your changes.
 
     npm run watch
-
-Navigate to the listening endpoint
-
-    open http://localhost:8000
 
 ## Contributing
 

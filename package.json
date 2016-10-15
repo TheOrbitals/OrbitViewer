@@ -5,12 +5,11 @@
   "main": "main.js",
   "scripts": {
     "test": "tape tests/**/*.tests.js | tap-spec",
-    "watch": "watchify viewer.js -o main.js --poll --verbose",
-    "build": "browserify viewer.js -o main.js"
+    "watch": "watchify src/viewer.js -o demo/main.js --poll --verbose",
+    "build": "browserify src/viewer.js -o demo/main.js"
   },
   "dependencies": {
     "angle-functions": "^0.2.0",
-    "dom-events": "^0.1.1",
     "fabric": "^1.6.5",
     "xyzed": "^0.1.0"
   },

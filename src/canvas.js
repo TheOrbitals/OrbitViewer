@@ -1,11 +1,11 @@
 var Xyz = require('xyzed')
-var ATime = require('./src/atime')
-var Planet = require('./src/planet')
-var Matrix = require('./src/matrix')
-var Planets = require('./src/planets')
-var TimeSpan = require('./src/time-span')
-var CometOrbit = require('./src/comet-orbit')
-var PlanetOrbit = require('./src/planet-orbit')
+var ATime = require('./atime')
+var Planet = require('./planet')
+var Matrix = require('./matrix')
+var Planets = require('./planets')
+var TimeSpan = require('./time-span')
+var CometOrbit = require('./comet-orbit')
+var PlanetOrbit = require('./planet-orbit')
 
 /**
  * Canvas class
