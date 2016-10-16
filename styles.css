@@ -1,0 +1,26 @@
+body {
+  color: #00f5FF;
+  background-color: black;
+  font-family: Helvetica, Arial;
+}
+.description {
+  color: #FFFF00;
+  font-size: 1.1em;
+}
+.container {
+  width: 860px;
+  margin: 0px auto;
+}
+.all-canvas-container {
+  position: relative;
+  height: 462px;
+  width: 785px;
+}
+.canvas {
+  -webkit-user-select: none;
+  position: absolute;
+  height: 462px;
+  width: 785px;
+  left: 0px;
+  top: 0px;
+}
