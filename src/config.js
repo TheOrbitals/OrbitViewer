@@ -1,9 +1,4 @@
 module.exports = {
-  dimensions: {
-    width: 500,
-    height: 500
-  },
-
   zoom: 50,
   datetime: null,
   verticalRotation: 50,

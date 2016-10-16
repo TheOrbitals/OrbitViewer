@@ -2,34 +2,7 @@
 <html>
 <head>
   <title>Orbit Viewer</title>
-  <style>
-  body {
-    color: #00f5FF;
-    background-color: black;
-    font-family: Helvetica, Arial;
-  }
-  .description {
-    color: #FFFF00;
-    font-size: 1.1em;
-  }
-  .container {
-    width: 860px;
-    margin: 0px auto;
-  }
-  .all-canvas-container {
-    position: relative;
-    height: 462px;
-    width: 785px;
-  }
-  .canvas {
-    -webkit-user-select: none;
-    position: absolute;
-    height: 462px;
-    width: 785px;
-    left: 0px;
-    top: 0px;
-  }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
@@ -42,9 +15,23 @@
       <canvas id="control-canvas" width="785" height="462" class="canvas"></canvas>
     </div>
 
-    <p>Use your mouse for horizontal and vertical rotation</p>
+    <p>Click and drag your mouse to adjust horizontal and vertical rotation</p>
   </div>
 
   <script src="main.js"></script>
+  <script>
+    var params = {
+      name: 'Ceres',
+      epoch: 19991118.5,
+      M: 356.648434,
+      e: 0.07831587,
+      a: 2.76631592,
+      peri: 73.917708,
+      node: 80.495123,
+      incl: 10.583393,
+      equinox: 2000.0
+    }
+    window.showOrbitViewer('display-canvas', 'control-canvas', params)
+  </script>
 </body>
 </html>
