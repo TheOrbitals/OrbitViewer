@@ -108,10 +108,22 @@ var minus = new f.fabric.Text('-', {
   left: 28
 })
 minus.id = 'minus'
+
+var borderHack = new f.fabric.Rect({
+  top: 0,
+  left: 0,
+  width: 784,
+  height: 461,
+  stroke: 'black',
+  selectable: false,
+  fill: 'rgba(0,0,0,0)'
+})
+
 fab.add(zoomIn)
 fab.add(plus)
 fab.add(zoomOut)
 fab.add(minus)
+fab.add(borderHack)
 
 fab.on('mouse:down', function (options) {
   var newZoom = config.zoom
