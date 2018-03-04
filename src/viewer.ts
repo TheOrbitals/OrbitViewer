@@ -1,11 +1,9 @@
-// var f = require('./bower_components/fabric/dist/fabric.require.js')
-var f = require('fabric')
-var event = require('dom-events')
-var ATime = require('./src/atime')
-var Comet = require('./src/comet')
-var Canvas = require('./canvas')
-// var Player = require('./player')
-var config = require('./config')
+import * as f from 'fabric'
+
+import ATime from './lib/atime'
+import Comet from './lib/comet'
+import config from './config'
+import Canvas from './canvas'
 
 /**
  * Yes, I know this file is a complete mess. That's okay for now.
@@ -52,7 +50,7 @@ var fab = new f.fabric.Canvas('control-canvas', {
   backgroundColor: 'rgba(0, 0, 0, 0)',
   selection: false
 })
-var canvasElement = document.getElementById('display-canvas')
+var canvasElement = <HTMLCanvasElement> document.getElementById('display-canvas')
 var ctx = canvasElement.getContext('2d')
 var dimensions = {width: canvasElement.width, height: canvasElement.height}
 config.dimensions = dimensions
@@ -62,9 +60,9 @@ var orbitCanvas = new Canvas(ctx, config, object)
 orbitCanvas.update()
 
 var applyConfig = function () {
-  zoomValue.innerText = config.zoom
-  vRotValue.innerText = config.verticalRotation
-  hRotValue.innerText = config.horizontalRotation
+  zoomValue.innerText = config.zoom.toString()
+  vRotValue.innerText = config.verticalRotation.toString()
+  hRotValue.innerText = config.horizontalRotation.toString()
   orbitCanvas.setConfig(config)
   orbitCanvas.update()
 }
@@ -77,7 +75,7 @@ var zoomMax = 600
 var zoom = document.getElementById('zoom')
 var zoomValue = document.getElementById('zoomValue')
 
-event.on(zoom, 'input', function () {
+zoom.addEventListener('input', (e) => {
   var value = this.value
   if (value >= zoomMax) return
   config.zoom = value
@@ -92,7 +90,7 @@ var hRotMax = 365
 var hRot = document.getElementById('hRot')
 var hRotValue = document.getElementById('hRotValue')
 
-event.on(hRot, 'input', function () {
+hRot.addEventListener('input', (e) => {
   var value = this.value
   if (value >= hRotMax) return
   config.horizontalRotation = value
@@ -107,7 +105,7 @@ var vRotMax = 180
 var vRot = document.getElementById('vRot')
 var vRotValue = document.getElementById('vRotValue')
 
-event.on(vRot, 'input', function () {
+vRot.addEventListener('input', (e) => {
   var value = this.value
   if (value >= vRotMax) return
   config.verticalRotation = value
@@ -128,7 +126,7 @@ var zoomIn = new f.fabric.Rect({
   rx: 0,
   ry: 0
 })
-zoomIn.id = 'zoomIn'
+// zoomIn.id = 'zoomIn'
 var plus = new f.fabric.Text('+', {
   selectable: false,
   fontSize: 16,
@@ -136,7 +134,7 @@ var plus = new f.fabric.Text('+', {
   top: 388,
   left: 26
 })
-plus.id = 'plus'
+// plus.id = 'plus'
 var zoomOut = new f.fabric.Rect({
   selectable: false,
   left: 20,
@@ -148,7 +146,7 @@ var zoomOut = new f.fabric.Rect({
   rx: 0,
   ry: 0
 })
-zoomOut.id = 'zoomOut'
+// zoomOut.id = 'zoomOut'
 var minus = new f.fabric.Text('-', {
   selectable: false,
   fontSize: 16,
@@ -156,7 +154,7 @@ var minus = new f.fabric.Text('-', {
   top: 417,
   left: 28
 })
-minus.id = 'minus'
+// minus.id = 'minus'
 fab.add(zoomIn)
 fab.add(plus)
 fab.add(zoomOut)
@@ -166,11 +164,11 @@ fab.on('mouse:down', function (options) {
   var newZoom = config.zoom
   var t = options.target
   if (t) {
-    if (t.id === 'zoomIn' || t.id === 'plus') {
+    if (t === zoomIn || t === plus) {
       newZoom = config.zoom + 5
       if (newZoom >= zoomMax) return
     }
-    if (t.id === 'zoomOut' || t.id === 'minus') {
+    if (t === zoomOut || t === minus) {
       newZoom = config.zoom - 5
       if (newZoom <= 0) return
     }
@@ -190,18 +188,20 @@ var rotating = false
 
 fab.on('mouse:down', function (options) {
   rotating = true
-  originX = options.e.clientX
-  originY = options.e.clientY
+  const e = <MouseEvent> options.e
+  originX = e.clientX
+  originY = e.clientY
   initialX = config.horizontalRotation
   initialY = config.verticalRotation
 })
 fab.on('mouse:up', function () {
   rotating = false
 })
-fab.on('mouse:move', function (event) {
+fab.on('mouse:move', function (options) {
   if (!rotating) return
-  var moveX = event.e.clientX
-  var moveY = event.e.clientY
+  const e = <MouseEvent> options.e
+  var moveX = e.clientX
+  var moveY = e.clientY
   var newValueX = initialX + ((originX - moveX) * 0.5)
   var newValueY = initialY + ((originY - moveY) * 0.5)
   config.horizontalRotation = newValueX

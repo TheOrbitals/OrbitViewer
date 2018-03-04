@@ -5,8 +5,8 @@ var angles = require('angle-functions')
  */
 
 // Constants
-var incTime = 1        // increment
-var decTime = -1       // decrement
+var incTime = 1 // increment
+var decTime = -1 // decrement
 var JD2000 = 2451545.0 // Julian Day on 2000.1.1 12h ET
 var JD1900 = 2415021.0 // Julian Day on 1900.1.1 12h ET
 
@@ -197,15 +197,20 @@ var atime = {
    * Print to standard output
    */
   toString: function () {
-    return this.year + '/' +
-      this.month + '/' +
-      this.day + ' ' +
-      this.hour + ':' +
-      this.minute + ':' +
-      this.second + ' = ' + this.julian + ' (TZ:' +
-      this.timezone + ')'
+    const {
+      year, month, day,
+      hour: hr, minute: min, second: sec,
+      timezone: tz, julian: j
+    } = this
+    return `${year}/${month}/${day} ${hr}:${min}:${sec} = ${j} (TZ: ${tz})`
+    // return this.year + '/' +
+    //   this.month + '/' +
+    //   this.day + ' ' +
+    //   this.hour + ':' +
+    //   this.minute + ':' +
+    //   this.second + ' = ' + this.julian + ' (TZ:' +
+    //   this.timezone + ')'
   }
-
 }
 
 /**
@@ -213,7 +218,7 @@ var atime = {
  */
 var getEp = function (julian) {
   var ft = (julian - JD2000) / 36525.0
-  if (ft > 30.0) {   // Out of calculation range
+  if (ft > 30.0) { // Out of calculation range
     ft = 30.0
   } else if (ft < -30.0) {
     ft = -30.0
@@ -278,4 +283,4 @@ ATime.getMonthAbbr = getMonthAbbr
 ATime.months = months
 
 ATime.prototype = atime
-module.exports = ATime
+export default ATime

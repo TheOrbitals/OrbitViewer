@@ -313,4 +313,4 @@ Matrix.vectorConstant = vectorConstant
  * Wire up the module
  */
 Matrix.prototype = matrix
-module.exports = Matrix
+export default Matrix

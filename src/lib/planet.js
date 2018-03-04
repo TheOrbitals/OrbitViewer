@@ -5,8 +5,8 @@ var PlanetExp = require('./planet-exp')
  * Planet module
  */
 
-var julianStart = 2433282.5  // 1950.0
-var julianEnd = 2473459.5    // 2060.0
+var julianStart = 2433282.5 // 1950.0
+var julianEnd = 2473459.5 // 2060.0
 
 var planet = {
   /**
@@ -26,4 +26,4 @@ var planet = {
 /**
  * Wire up the module
  */
-module.exports = planet
+export default planet

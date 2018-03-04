@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   Sun: 0,
   Mercury: 1,
   Venus: 2,

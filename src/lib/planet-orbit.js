@@ -55,4 +55,4 @@ var planetOrbit = {
  * Wire up the module
  */
 PlanetOrbit.prototype = planetOrbit
-module.exports = PlanetOrbit
+export default PlanetOrbit

@@ -1,5 +1,4 @@
-module.exports = {
-
+export default {
   dimensions: {
     width: 500,
     height: 500
@@ -18,5 +17,4 @@ module.exports = {
   centerOnObjectIndex: 0,
 
   font: '12pt Helvetica'
-
 }

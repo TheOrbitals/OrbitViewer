@@ -487,4 +487,4 @@ function PlanetElmP2 (
  * Wire up the module
  */
 PlanetElm.prototype = planetElm
-module.exports = PlanetElm
+export default PlanetElm

@@ -15,4 +15,4 @@ var TimeSpan = function (year, month, day, hour, minutes, seconds) {
 /**
  * Wire up the module
  */
-module.exports = TimeSpan
+export default TimeSpan

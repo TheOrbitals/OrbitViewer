@@ -615,4 +615,4 @@ function PlanetExpP2 (/* Jupiter and Saturn */
 /**
  * Wire up the module
  */
-module.exports = planetExp
+export default planetExp

@@ -128,4 +128,4 @@ var cometOrbit = {
  * Wire up the module
  */
 CometOrbit.prototype = cometOrbit
-module.exports = CometOrbit
+export default CometOrbit

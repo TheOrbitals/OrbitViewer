@@ -1,11 +1,11 @@
-var Xyz = require('xyzed')
-var ATime = require('./src/atime')
-var Planet = require('./src/planet')
-var Matrix = require('./src/matrix')
-var Planets = require('./src/planets')
-var TimeSpan = require('./src/time-span')
-var CometOrbit = require('./src/comet-orbit')
-var PlanetOrbit = require('./src/planet-orbit')
+import Xyz from 'xyzed'
+import ATime from './lib/atime'
+import Planet from './lib/planet'
+import Matrix from './lib/matrix'
+import Planets from './lib/planets'
+import TimeSpan from './lib/time-span'
+import CometOrbit from './lib/comet-orbit'
+import PlanetOrbit from './lib/planet-orbit'
 
 /**
  * Canvas class
@@ -368,7 +368,7 @@ var canvas = {
   _getDrawPoint: function (xyz) {
     // 600 means 5...fZoom...100 -> 120AU...Width...6AU
     var mul = this._zoom * this.dimensions.width / 600.0 *
-      (1.0 + xyz.z / 250.0)   // Parse
+      (1.0 + xyz.z / 250.0) // Parse
     var x = this._x0 + Math.round(xyz.x * mul)
     var y = this._y0 - Math.round(xyz.y * mul)
     return {x: x, y: y}
@@ -425,4 +425,4 @@ var canvas = {
  * Wire up the module
  */
 Canvas.prototype = canvas
-module.exports = Canvas
+export default Canvas

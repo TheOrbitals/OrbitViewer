@@ -167,4 +167,4 @@ Comet.GAUSS = GAUSS
  * Wire up the module
  */
 Comet.prototype = comet
-module.exports = Comet
+export default Comet
