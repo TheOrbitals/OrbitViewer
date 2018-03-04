@@ -28,7 +28,7 @@ Build the source files into a single file. You don't need to do this if you're g
 
 Spin up a local HTTP server. If you have a different way than this, go for it.
 
-    python -m SimpleHTTPServer
+    python -m http.server 8000
 
 Set up a watcher so `main.js` gets rebuilt automatically as you save your changes.
 

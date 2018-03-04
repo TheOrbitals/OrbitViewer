@@ -7,25 +7,10 @@
   "homepage": "https://stemn.com/project/553738f3bfc5bec20847ca2b",
   "license": "Apache-2.0",
   "scripts": {
-    "test": "tape tests/**/*.tests.js | tap-spec",
-    "watch": "watchify viewer.js -o main.js --poll --verbose",
-    "build": "browserify viewer.js -o main.js"
+    "dev": "http-server & webpack --watch",
+    "build": "webpack",
+    "test": "jest"
   },
-  "dependencies": {
-    "angle-functions": "^0.2.0",
-    "dom-events": "^0.1.1",
-    "fabric": "^1.6.5",
-    "xyzed": "^0.1.0"
-  },
-  "devDependencies": {
-    "browserify": "^9.0.8",
-    "tap-spec": "^4.1.1",
-    "tape": "^4.6.2",
-    "watchify": "^3.1.2"
-  },
-  "author": "Don Smith <locksmithdon@gmail.com>",
-  "homepage": "https://stemn.com/projects/orbit-viewer",
-  "license": "GPLv2",
   "keywords": [
     "orbit",
     "neo",
@@ -39,5 +24,16 @@
   },
   "bugs": {
     "url": "https://github.com/TheOrbitals/OrbitViewer/issues"
+  },
+  "devDependencies": {
+    "@types/fabric": "^1.5.30",
+    "angle-functions": "^0.2.0",
+    "fabric": "^2.0.3",
+    "http-server": "^0.11.1",
+    "jest": "^22.4.2",
+    "ts-loader": "^3.5.0",
+    "typescript": "^2.7.2",
+    "webpack": "^3.11.0",
+    "xyzed": "^0.1.0"
   }
 }
