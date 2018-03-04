@@ -3,6 +3,9 @@
   "version": "2.0.0",
   "description": "A tool to visualize the orbits of planets and near earth objects",
   "main": "main.js",
+  "author": "Don Smith <don@antiantonym.com>",
+  "homepage": "https://stemn.com/project/553738f3bfc5bec20847ca2b",
+  "license": "Apache-2.0",
   "scripts": {
     "test": "tape tests/**/*.tests.js | tap-spec",
     "watch": "watchify viewer.js -o main.js --poll --verbose",
