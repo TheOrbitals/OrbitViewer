@@ -14,7 +14,7 @@
   "dependencies": {
     "angle-functions": "^0.2.0",
     "dom-events": "^0.1.1",
-    "fabric": "^1.6.5",
+    "fabric": "^3.0.0",
     "xyzed": "^0.1.0"
   },
   "devDependencies": {
